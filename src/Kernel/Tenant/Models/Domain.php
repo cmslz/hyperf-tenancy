@@ -53,4 +53,9 @@ class Domain extends Model
         $scheme = config('app_env') === 'dev' ? 'http://' : 'https://';
         return $scheme . $domain;
     }
+
+    public static function tenantIdByDomain(string $domain)
+    {
+        return self::query()->where('domain', $domain)->value('tenant_id');
+    }
 }

@@ -7,7 +7,7 @@ declare(strict_types=1);
  * Created by xiaobai at 2023/6/11 23:06
  */
 
-namespace Hyperf\Coroutine\Coroutine;
+namespace Cmslz\HyperfTenancy\Kernel\ClassMap;
 
 
 use Cmslz\HyperfTenancy\Kernel\Log\AppendRequestIdProcessor;

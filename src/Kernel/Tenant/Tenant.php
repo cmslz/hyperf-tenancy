@@ -20,7 +20,7 @@ use InvalidArgumentException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use Cmslz\HyperfTenancy\Kernel\Tenant\Models\Tenant as TenantModel;
+use Cmslz\HyperfTenancy\Kernel\Tenant\Models\Tenants as TenantModel;
 use Redis;
 use Swoole\Coroutine\Channel;
 

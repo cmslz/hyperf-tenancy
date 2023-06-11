@@ -9,13 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Di\Resolver;
+namespace Cmslz\HyperfTenancy\Kernel\ClassMap;
 
 use Hyperf\Di\Definition\DefinitionInterface;
 use Hyperf\Di\Definition\FactoryDefinition;
 use Hyperf\Di\Definition\ObjectDefinition;
 use Hyperf\Di\Definition\SelfResolvingDefinitionInterface;
 use Hyperf\Di\Exception\InvalidDefinitionException;
+use Hyperf\Di\Resolver\FactoryResolver;
+use Hyperf\Di\Resolver\ObjectResolver;
+use Hyperf\Di\Resolver\ResolverInterface;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
 

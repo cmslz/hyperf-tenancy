@@ -10,8 +10,8 @@ return [
     'scan' => [
         ...[],
         'class_map' => [
-            Hyperf\Coroutine\Coroutine::class => BASE_PATH . '/src/Kernel/ClassMap/Coroutine.php',
-            Hyperf\Di\Resolver\ResolverDispatcher::class => BASE_PATH . '/src/Kernel/ClassMap/ResolverDispatcher.php',
+            Hyperf\Coroutine\Coroutine::class => Cmslz\HyperfTenancy\Kernel\ClassMap\Coroutine::class,
+            Hyperf\Di\Resolver\ResolverDispatcher::class => Cmslz\HyperfTenancy\Kernel\ClassMap\ResolverDispatcher::class,
         ],
     ],
 ];
