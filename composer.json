@@ -1,0 +1,45 @@
+{
+  "name": "cmslz/hyperf-tenancy",
+  "description": "hyperf多租户",
+  "type": "library",
+  "license": "MIT",
+  "suggest": {
+    "ext-redis": "Required to use Redis Client."
+  },
+  "autoload": {
+    "psr-4": {
+      "Cmslz\\HyperfTenancy\\": "src/"
+    },
+    "files": [
+      "src/function.php"
+    ]
+  },
+  "authors": [
+    {
+      "name": "heqiangchun"
+    }
+  ],
+  "require": {
+    "php": ">=8.0",
+    "hyperf/engine": "^2.8",
+    "hyperf/coroutine": "^3.0",
+    "monolog/monolog": "^2.9",
+    "hyperf/logger": "^3.0",
+    "hyperf/http-server": "^3.0",
+    "hyperf/di": "^3.0",
+    "hyperf/cache": "^3.0",
+    "guzzlehttp/guzzle": "^7.7",
+    "hyperf/paginator": "^3.0",
+    "hyperf/resource": "^3.0",
+    "hyperf/framework": "^3.0",
+    "hyperf/async-queue": "^3.0",
+    "hyperf/database": "^3.0",
+    "hyperf/db-connection": "^3.0",
+    "hyperf/config": "^3.0",
+    "hyperf/redis": "^3.0",
+    "hyperf/model-cache": "^3.0"
+  },
+  "require-dev": {
+    "swoole/ide-helper": "^5.0"
+  }
+}
