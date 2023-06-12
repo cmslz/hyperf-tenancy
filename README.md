@@ -6,7 +6,7 @@ https://github.com/cmslz/hyperf-tenancy
 
 - annotations.php 配置
 
-> 创建 `Coroutine::class` 继承 `\Cmslz\HyperfTenancy\Kernel\ClassMap\Coroutine` 命名空间 `Hyperf\Coroutine\Coroutine`
+> 创建 `Coroutine::class` 继承 `\Cmslz\HyperfTenancy\Kernel\ClassMap\Coroutine` 命名空间 `Hyperf\Coroutine`
 > 
 > 创建 `ResolverDispatcher::class` 继承 `\Cmslz\HyperfTenancy\Kernel\ClassMap\ResolverDispatcher` 命名空间 `Hyperf\Di\Resolver`
 

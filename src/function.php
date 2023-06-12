@@ -8,9 +8,17 @@ use Cmslz\HyperfTenancy\Kernel\Tenant\Tenant;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
+use Hyperf\Logger\LoggerFactory;
 use Hyperf\Paginator\AbstractPaginator;
 use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Resource\Json\JsonResource;
+
+if (!function_exists('logger')) {
+    function logger(string $name = 'hyperf', string $group = 'default')
+    {
+        return ApplicationContext::getContainer()->get(LoggerFactory::class)->get($name, $group);
+    }
+}
 
 if (!function_exists('call')) {
     function call($callback, array $args = [])

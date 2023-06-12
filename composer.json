@@ -3,6 +3,10 @@
   "description": "hyperf多租户",
   "type": "library",
   "license": "MIT",
+  "keywords": [
+    "php",
+    "hyperf"
+  ],
   "suggest": {
     "ext-redis": "Required to use Redis Client."
   },
@@ -41,5 +45,10 @@
   },
   "require-dev": {
     "swoole/ide-helper": "^5.0"
+  },
+  "extra": {
+    "hyperf": {
+      "config": "Cmslz\\HyperfTenancy\\ConfigProvider"
+    }
   }
 }

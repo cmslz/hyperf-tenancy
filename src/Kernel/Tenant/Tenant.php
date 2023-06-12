@@ -76,10 +76,10 @@ class Tenant
         $this->tenant = $tenant;
     }
 
-    public function getId()
+    public function getId(bool $isCheck = true)
     {
         // 过滤根目录
-        if (empty($this->id)) {
+        if (empty($this->id) && $isCheck) {
             throw new InvalidArgumentException('The tenant is invalid.');
         }
         return $this->id;

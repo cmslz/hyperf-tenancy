@@ -7,7 +7,7 @@ declare(strict_types=1);
  * Created by xiaobai at 2023/6/11 23:06
  */
 
-namespace Cmslz\HyperfTenancy\Kernel\ClassMap;
+namespace Hyperf\Coroutine;
 
 use Hyperf\Engine\Coroutine as Co;
 use Cmslz\HyperfTenancy\Kernel\Context\Coroutine as Go;
