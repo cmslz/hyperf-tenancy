@@ -1,17 +1,22 @@
 # hyperf-tenancy
 
 https://github.com/cmslz/hyperf-tenancy
+
 ## 配置
 
 - annotations.php 配置
+
+> 创建 `Coroutine::class` 继承 `\Cmslz\HyperfTenancy\Kernel\ClassMap\Coroutine` 命名空间 `Hyperf\Coroutine\Coroutine`
+> 
+> 创建 `ResolverDispatcher::class` 继承 `\Cmslz\HyperfTenancy\Kernel\ClassMap\ResolverDispatcher` 命名空间 `Hyperf\Di\Resolver`
 
 ```PHP
 return [
     'scan' => [
         ...[],
         'class_map' => [
-            Hyperf\Coroutine\Coroutine::class => Cmslz\HyperfTenancy\Kernel\ClassMap\Coroutine::class,
-            Hyperf\Di\Resolver\ResolverDispatcher::class => Cmslz\HyperfTenancy\Kernel\ClassMap\ResolverDispatcher::class,
+            Hyperf\Coroutine\Coroutine::class => BASE_PATH . '/src/Kernel/ClassMap/Coroutine.php',
+            Hyperf\Di\Resolver\ResolverDispatcher::class => BASE_PATH . '/src/Kernel/ClassMap/ResolverDispatcher.php',
         ],
     ],
 ];
@@ -88,6 +93,7 @@ return [
 ```
 
 - dependencies.php
+
 ```PHP
 return [
     ...[],
@@ -97,7 +103,9 @@ return [
     Hyperf\Database\ConnectionResolverInterface::class => Cmslz\HyperfTenancy\Kernel\Tenant\ConnectionResolver::class,
 ];
 ```
+
 - redis.php
+
 ```PHP
 return [
     ...[],
@@ -135,4 +143,5 @@ return [
 ```
 
 ## 使用
+
     在需要使用路由添加中间件 `TenantMiddleware::class`

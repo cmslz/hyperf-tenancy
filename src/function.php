@@ -26,6 +26,24 @@ if (!function_exists('config_base')) {
     }
 }
 
+if (!function_exists('di')) {
+    /**
+     * Finds an entry of the container by its identifier and returns it.
+     * @param string|null $id
+     * @return mixed|\Psr\Container\ContainerInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
+    function di(?string $id = null)
+    {
+        $container = ApplicationContext::getContainer();
+        if ($id) {
+            return $container->get($id);
+        }
+
+        return $container;
+    }
+}
 if (!function_exists('config')) {
     function config(string $key, mixed $default = null): mixed
     {
