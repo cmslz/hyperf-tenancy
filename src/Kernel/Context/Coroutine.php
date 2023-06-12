@@ -23,8 +23,12 @@ class Coroutine
     public function create(callable $callable): int
     {
         $id = \Hyperf\Coroutine\Coroutine::id();
+        $tenantId = tenancy()->getId(false);
         $coroutine = Co::create(
-            function () use ($callable, $id) {
+            function () use ($callable, $id, $tenantId) {
+                if (!empty($tenantId)) {
+                    tenancy()->init($tenantId);
+                }
                 try {
                     // Shouldn't copy all contexts to avoid socket already been bound to another coroutine.
                     Context::copy(

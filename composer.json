@@ -45,10 +45,5 @@
   },
   "require-dev": {
     "swoole/ide-helper": "^5.0"
-  },
-  "extra": {
-    "hyperf": {
-      "config": "Cmslz\\HyperfTenancy\\ConfigProvider"
-    }
   }
 }
