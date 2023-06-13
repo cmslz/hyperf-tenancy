@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * Each engineer has a duty to keep the code elegant
@@ -12,11 +13,11 @@ use Symfony\Component\Console\Input\InputOption;
 
 trait HasATenantsOption
 {
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return array_merge([
             ['tenants', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL, '', null],
-        ], /*method_exists($this, 'getOptions')?parent::getOptions():*/[]);
+        ], /*method_exists($this, 'getOptions')?parent::getOptions():*/ []);
     }
 
     protected function getTenants()

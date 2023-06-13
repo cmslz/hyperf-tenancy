@@ -7,16 +7,12 @@
 namespace Cmslz\HyperfTenancy\Commands;
 
 
-use Cmslz\HyperfTenancy\Concerns\ConfirmToProceed;
-use Cmslz\HyperfTenancy\Concerns\DealsWithMigrations;
 use Cmslz\HyperfTenancy\Concerns\HasATenantsOption;
 use Hyperf\Database\Commands\Migrations\MigrateCommand;
 
 class Migrate extends MigrateCommand
 {
-    use HasATenantsOption,
-        DealsWithMigrations,
-        ConfirmToProceed;
+    use HasATenantsOption;
 
     /**
      * for hyperf command

@@ -8,15 +8,12 @@ declare(strict_types=1);
 
 namespace Cmslz\HyperfTenancy\Commands;
 
-
-use Cmslz\HyperfTenancy\Concerns\ConfirmToProceed;
-use Cmslz\HyperfTenancy\Concerns\DealsWithMigrations;
 use Cmslz\HyperfTenancy\Concerns\HasATenantsOption;
 use Hyperf\Database\Commands\Migrations\RollbackCommand;
 
 class Rollback extends RollbackCommand
 {
-    use HasATenantsOption, DealsWithMigrations, ConfirmToProceed;
+    use HasATenantsOption;
 
     /**
      * for hyperf command
