@@ -4,6 +4,10 @@ https://github.com/cmslz/hyperf-tenancy
 
 ## 配置
 
+- tenancy.php
+
+> [config.tenancy]('/publish/config.php')
+
 - annotations.php 配置
 
 > 创建 `Coroutine::class` 继承 `\Cmslz\HyperfTenancy\Kernel\ClassMap\Coroutine` 命名空间 `Hyperf\Coroutine`

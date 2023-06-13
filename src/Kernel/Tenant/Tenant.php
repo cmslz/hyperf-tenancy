@@ -41,9 +41,58 @@ class Tenant
 
     protected TenantModel|null $tenant;
 
+    /**
+     * @throws Exception
+     */
+    public function tenantModel(): TenantModel
+    {
+        $class = config('tenancy.tenant_model');
+        $tenantModel = new $class();
+        if (!$tenantModel instanceof TenantModel) {
+            throw new Exception('tenant_model instanceof error!');
+        }
+        return $tenantModel;
+    }
+
+    /**
+     * @return Domain
+     * @throws Exception
+     * Created by xiaobai at 2023/6/13 15:51
+     */
+    public function domainModel(): Domain
+    {
+        $class = config('tenancy.domain_model');
+        $domainModel = new $class();
+
+        if (!$domainModel instanceof Domain) {
+            throw new Exception('domain_model instanceof error!');
+        }
+        return $domainModel;
+    }
+
     public function __construct()
     {
         $this->container = ApplicationContext::getContainer();
+    }
+
+    /**
+     * 中央域数据库链接池
+     * @return string
+     * Created by xiaobai at 2023/6/13 15:43
+     */
+    public function getCentralConnection(): string
+    {
+        return env('tenancy.database.central_connection', 'central');
+    }
+
+    /**
+     * 租户数据库前缀
+     * @return string
+     * Created by xiaobai at 2023/6/13 15:43
+     */
+    public function getTenantDbPrefix(): string
+    {
+        return env('tenancy.database.tenant_prefix', 'tenant_');
     }
 
     public function init($id = null)
@@ -55,7 +104,7 @@ class Tenant
                 $id = $request->query('tenant');
             }
             if (empty($id)) {
-                $id = Domain::tenantIdByDomain($request->header('Host'));
+                $id = $this->domainModel()::tenantIdByDomain($request->header('Host'));
             }
         }
         // 过滤根目录
@@ -66,7 +115,7 @@ class Tenant
         /**
          * @var TenantModel $tenant
          */
-        $tenant = TenantModel::query()->where('id', $id)->first();
+        $tenant = $this->tenantModel()::query()->where('id', $id)->first();
         if (empty($tenant)) {
             throw new InvalidArgumentException(
                 sprintf('The tenant %s is invalid', $id)
@@ -105,7 +154,7 @@ class Tenant
     public function runForMultiple($tenants, callable $callable)
     {
         // Convert null to all tenants
-        $tenants = empty($tenants) ? TenantModel::query()->distinct()->orderBy('created_at')->pluck('id')->toArray() : $tenants;
+        $tenants = empty($tenants) ? $this->tenantModel()::query()->distinct()->orderBy('created_at')->pluck('id')->toArray() : $tenants;
 
         // Convert incrementing int ids to strings
         $tenants = is_int($tenants) ? (string)$tenants : $tenants;
@@ -144,7 +193,7 @@ class Tenant
     public function redis(string $poolName = 'tenant')
     {
         $redis = $this->container->get(RedisFactory::class)->get($poolName);
-        $redis->setOption(Redis::OPT_PREFIX, 'tenant:' . $this->id);
+        $redis->setOption(Redis::OPT_PREFIX, config('tenancy.redis.tenant_prefix', 'tenant_') . $this->id);
         return $redis;
     }
 
@@ -154,7 +203,7 @@ class Tenant
      */
     public function cache()
     {
-        $tenantKey = "tenant_" . $this->id;
+        $tenantKey = config('tenancy.cache.tenant_prefix', 'tenant_') . $this->id;
         return $this->container->get(CacheManager::class)->setTenantConfig($tenantKey)->getDriver($tenantKey);
     }
 }

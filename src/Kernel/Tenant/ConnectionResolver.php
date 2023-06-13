@@ -21,7 +21,6 @@ class ConnectionResolver extends \Hyperf\DbConnection\ConnectionResolver
 
     /**
      * Get a database connection instance.
-     *
      * @param null $name
      * @return ConnectionInterface
      * @throws \Psr\Container\ContainerExceptionInterface
@@ -29,10 +28,10 @@ class ConnectionResolver extends \Hyperf\DbConnection\ConnectionResolver
      */
     public function connection($name = null): ConnectionInterface
     {
-        if ($name !== 'central') {
+        if ($name !== tenancy()->getCentralConnection()) {
             $id = tenancy()->getId();
-            $name = 'tenant_' . $id;
-            $key = 'databases.default';
+            $name = tenancy()->getTenantDbPrefix() . $id;
+            $key = 'databases.' . tenancy()->getCentralConnection();
 
             if (empty(config_base()->has($key))) {
                 throw new InvalidArgumentException(sprintf('config[%s] is not exist!', $key));

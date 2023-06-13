@@ -13,14 +13,15 @@ return [
         'localhost'
     ],
     'database' => [
-        'connection' => env('DB_CONNECTION', 'central'),
-        'prefix' => 'tenant',
+        'central_connection' => env('DB_CONNECTION', 'central'),
+        'tenant_prefix' => 'tenant_', // 租户数据库前缀
     ],
     'cache' => [
-        'tag_base' => 'tenant'
+        'tenant_prefix' => 'tenant_',
+        'connection' => 'tenant'
     ],
     'redis' => [
-        'prefix' => 'tenant',
+        'tenant_prefix' => 'tenant_',
         'connection' => 'tenant'
     ]
 ];
