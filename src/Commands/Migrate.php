@@ -9,16 +9,18 @@ namespace Cmslz\HyperfTenancy\Commands;
 
 use Cmslz\HyperfTenancy\Concerns\HasATenantsOption;
 use Hyperf\Database\Commands\Migrations\MigrateCommand;
+use Hyperf\Database\Migrations\Migrator;
 
 class Migrate extends MigrateCommand
 {
     use HasATenantsOption;
 
-    /**
-     * for hyperf command
-     * @var string
-     */
-    protected ?string $name = 'tenants:migrate';
+    public function __construct(Migrator $migrator)
+    {
+        $this->migrator = $migrator;
+        parent::__construct($migrator);
+        parent::setName('tenants:migrate');
+    }
 
     /**
      * The console command description.

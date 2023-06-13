@@ -95,7 +95,7 @@ class Tenant
         return env('tenancy.database.tenant_prefix', 'tenant_');
     }
 
-    public function init($id = null)
+    public function init($id = null, bool $isCheck = true)
     {
         if (empty($id)) {
             $request = $this->container->get(RequestInterface::class);
@@ -108,7 +108,7 @@ class Tenant
             }
         }
         // 过滤根目录
-        if (empty($id)) {
+        if (empty($id) && $isCheck) {
             throw new InvalidArgumentException('The tenant is invalid.');
         }
 
@@ -116,7 +116,7 @@ class Tenant
          * @var TenantModel $tenant
          */
         $tenant = $this->tenantModel()::query()->where('id', $id)->first();
-        if (empty($tenant)) {
+        if (empty($tenant) && $isCheck) {
             throw new InvalidArgumentException(
                 sprintf('The tenant %s is invalid', $id)
             );
@@ -161,25 +161,17 @@ class Tenant
 
         // Wrap string in array
         $tenants = is_string($tenants) ? [$tenants] : $tenants;
-        $originalTenantId = $this->getId();
+        $originalTenantId = $this->getId(false);
         try {
             foreach ($tenants as $tenantId) {
-                // 保证进程执行完毕后再执行下一个进程
-                $channel = new Channel(1);
                 tenancy()->init($tenantId);
-                $callable = function () use ($callable, $channel) {
-                    $result = call($callable);
-                    $channel->push($result);
-                    return $result;
-                };
-                tenant_go($callable);
-                $channel->pop();
-                tenancy()->init($originalTenantId);
+                call($callable, [tenancy()->tenant]);
+                tenancy()->init($originalTenantId, false);
             }
         } catch (Exception $exception) {
             throw $exception;
         } finally {
-            $this->init($originalTenantId);
+            $this->init($originalTenantId, false);
         }
     }
 

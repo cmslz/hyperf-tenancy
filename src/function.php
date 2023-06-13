@@ -105,19 +105,6 @@ if (!function_exists('tenancy')) {
     }
 }
 
-if (!function_exists('tenant_go')) {
-    function tenant_go(callable $callable)
-    {
-        $id = tenancy()->getId();
-        Swoole\Coroutine::create(
-            function () use ($id, $callable) {
-                tenancy()->init($id);
-                call($callable);
-            }
-        );
-    }
-}
-
 if (!function_exists('cache')) {
     /**
      * 中央域通用缓存

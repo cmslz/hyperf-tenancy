@@ -10,16 +10,18 @@ namespace Cmslz\HyperfTenancy\Commands;
 
 use Cmslz\HyperfTenancy\Concerns\HasATenantsOption;
 use Hyperf\Database\Commands\Migrations\RollbackCommand;
+use Hyperf\Database\Migrations\Migrator;
 
 class Rollback extends RollbackCommand
 {
     use HasATenantsOption;
 
-    /**
-     * for hyperf command
-     * @var string
-     */
-    protected ?string $name = 'tenants:rollback';
+    public function __construct(Migrator $migrator)
+    {
+        $this->migrator = $migrator;
+        parent::__construct($migrator);
+        parent::setName('tenants:rollback');
+    }
 
     /**
      * The console command description.
@@ -28,11 +30,6 @@ class Rollback extends RollbackCommand
      */
     protected string $description = 'Rollback migrations for tenant(s).';
 
-    /**
-     * Execute the console command.
-     *
-     * @return mixed
-     */
     public function handle()
     {
         if (!$this->confirmToProceed()) {
@@ -41,7 +38,6 @@ class Rollback extends RollbackCommand
 
         tenancy()->runForMultiple($this->input->getOption('tenants'), function ($tenant) {
             $this->line("Tenant: {$tenant['id']}");
-            // Rollback
             parent::handle();
         });
     }

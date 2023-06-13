@@ -15,9 +15,24 @@ trait HasATenantsOption
 {
     protected function getOptions(): array
     {
-        return array_merge([
-            ['tenants', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL, '', null],
-        ], /*method_exists($this, 'getOptions')?parent::getOptions():*/ []);
+        $options = parent::getOptions();
+        array_push($options, ['tenants', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL, '', null]);
+        return $options;
+    }
+
+
+    /**
+     * Prepare the migration database for running.
+     */
+    protected function prepareDatabase()
+    {
+        $this->migrator->setConnection(tenancy()->getTenantDbPrefix() . tenancy()->getId());
+
+        if (!$this->migrator->repositoryExists()) {
+            $this->call('migrate:install', array_filter([
+                '--database' => $this->input->getOption('database'),
+            ]));
+        }
     }
 
     protected function getTenants()
