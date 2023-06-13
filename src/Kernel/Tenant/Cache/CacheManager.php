@@ -14,7 +14,7 @@ class CacheManager extends \Hyperf\Cache\CacheManager
     public function setTenantConfig($configKey): static
     {
         if (!$this->config->has($configKey)) {
-            $config = $this->config->get('cache.' . $this->config->get('tenancy.cache.connection', 'tenant'));
+            $config = $this->config->get('cache.' . $this->config->get('tenancy.cache.tenant_connection', 'tenant'));
             // 每个tenant后缀不一样
             $config['prefix'] .= tenancy()->getId() . ':';
             $this->config->set($configKey, $config);

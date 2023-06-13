@@ -185,15 +185,14 @@ class Tenant
 
     /**
      * 租户通用Redis
-     * @param string $poolName
      * @return \Hyperf\Redis\RedisProxy
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface Created by xiaobai at 2023/2/14 18:47
      */
-    public function redis(string $poolName = 'tenant')
+    public function redis()
     {
-        $redis = $this->container->get(RedisFactory::class)->get($poolName);
-        $redis->setOption(Redis::OPT_PREFIX, config('tenancy.redis.tenant_prefix', 'tenant_') . $this->id);
+        $redis = $this->container->get(RedisFactory::class)->get(config('tenancy.cache.tenant_connection'));
+        $redis->setOption(Redis::OPT_PREFIX, config('tenancy.cache.tenant_prefix', 'tenant_') . $this->id);
         return $redis;
     }
 

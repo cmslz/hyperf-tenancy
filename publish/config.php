@@ -18,10 +18,7 @@ return [
     ],
     'cache' => [
         'tenant_prefix' => 'tenant_',
-        'connection' => 'tenant'
-    ],
-    'redis' => [
-        'tenant_prefix' => 'tenant_',
-        'connection' => 'tenant'
+        'tenant_connection' => 'tenant',
+        'central_connection' => 'central'
     ]
 ];

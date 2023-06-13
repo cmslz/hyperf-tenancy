@@ -5,13 +5,18 @@
  */
 
 use Cmslz\HyperfTenancy\Kernel\Tenant\Tenant;
+use Hyperf\Cache\CacheManager;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Logger\LoggerFactory;
 use Hyperf\Paginator\AbstractPaginator;
 use Hyperf\Paginator\LengthAwarePaginator;
+use Hyperf\Redis\RedisFactory;
+use Hyperf\Redis\RedisProxy;
 use Hyperf\Resource\Json\JsonResource;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 if (!function_exists('logger')) {
     function logger(string $name = 'hyperf', string $group = 'default')
@@ -110,5 +115,65 @@ if (!function_exists('tenant_go')) {
                 call($callable);
             }
         );
+    }
+}
+
+if (!function_exists('cache')) {
+    /**
+     * 中央域通用缓存
+     * @return \Hyperf\Cache\Driver\DriverInterface
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * Created by xiaobai at 2023/6/13 16:21
+     */
+    function cache()
+    {
+        $centralConnection = config('tenancy.cache.central_connection', 'central');
+        return ApplicationContext::getContainer()->get(CacheManager::class)->getDriver($centralConnection);
+    }
+}
+
+
+if (!function_exists('redis')) {
+    /**
+     * 中央域通用redis
+     * @return RedisProxy
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * Created by xiaobai at 2023/2/15 14:21
+     */
+    function redis(): RedisProxy
+    {
+        $centralConnection = config('tenancy.cache.central_connection', 'central');
+        $redis = ApplicationContext::getContainer()->get(RedisFactory::class)->get($centralConnection);
+        $redis->setOption(Redis::OPT_PREFIX, $centralConnection . ':');
+        return $redis;
+    }
+}
+
+if (!function_exists('tenant_cache')) {
+    /**
+     * 租户缓存
+     * @return \Hyperf\Cache\Driver\DriverInterface
+     * Created by xiaobai at 2023/6/13 16:21
+     */
+    function tenant_cache(): \Hyperf\Cache\Driver\DriverInterface
+    {
+        return tenancy()->cache();
+    }
+}
+
+
+if (!function_exists('tenant_redis')) {
+    /**
+     * 中央域通用redis
+     * @return RedisProxy
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * Created by xiaobai at 2023/2/15 14:21
+     */
+    function tenant_redis(): RedisProxy
+    {
+        return tenancy()->redis();
     }
 }
