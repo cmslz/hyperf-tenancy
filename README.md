@@ -6,7 +6,7 @@ https://github.com/cmslz/hyperf-tenancy
 
 - tenancy.php
 
-> [config.tenancy]('/publish/config.php')
+> [config.tenancy](/publish/config.php)
 
 - annotations.php 配置
 
