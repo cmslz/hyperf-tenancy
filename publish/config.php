@@ -20,5 +20,8 @@ return [
         'tenant_prefix' => 'tenant_',
         'tenant_connection' => 'tenant',
         'central_connection' => 'central'
+    ],
+    'async_queue' => [
+        'tenant_connection' => 'tenant', // 队列连接
     ]
 ];

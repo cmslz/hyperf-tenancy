@@ -5,6 +5,8 @@
  */
 
 use Cmslz\HyperfTenancy\Kernel\Tenant\Tenant;
+use Hyperf\AsyncQueue\Driver\DriverFactory;
+use Hyperf\AsyncQueue\JobInterface;
 use Hyperf\Cache\CacheManager;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
@@ -162,5 +164,19 @@ if (!function_exists('tenant_redis')) {
     function tenant_redis(): RedisProxy
     {
         return tenancy()->redis();
+    }
+}
+
+if (!function_exists('queue_push')) {
+    /**
+     * Push a job to async queue.
+     */
+    function queue_push(JobInterface $job, int $delay = 0, string $key = ''): bool
+    {
+        if (empty($key)) {
+            $key = env('tenancy.async_queue.tenant_connection', 'default');
+        }
+        $driver = di()->get(DriverFactory::class)->get($key);
+        return $driver->push($job, $delay);
     }
 }

@@ -2,7 +2,16 @@
 
 https://github.com/cmslz/hyperf-tenancy
 
+## 介绍
+> 1. 可通过header参数或在GET参数绑定对应租户
+>> Header:x-tenant-id:xxxx
+>> GET:tenant = xxx
+
+
 ## 配置
+
+- amqp.php
+> \Cmslz\HyperfTenancy\Kernel\Tenant\AsyncQueue\RedisDriver::class
 
 - tenancy.php
 
@@ -147,5 +156,46 @@ return [
 ```
 
 ## 使用
-
     在需要使用路由添加中间件 `TenantMiddleware::class`
+
+### 队列使用
+
+#### 消费端
+```PHP
+<?php
+
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+namespace App\Job;
+
+use Hyperf\AsyncQueue\Job;
+
+class TenantJob extends Job
+{
+    protected $params;
+    public function __construct($params)
+    {
+        // 这里最好是普通数据，不要使用携带 IO 的对象，比如 PDO 对象
+        $this->params = $params;
+    }
+
+    public function handle()
+    {
+        var_dump($this->params, tenancy()->getId());
+    }
+}
+```
+
+#### 客户端
+```PHP
+use App\Job\TenantJob;
+queue_push(new TenantJob(['2131313']),5);
+```
+
