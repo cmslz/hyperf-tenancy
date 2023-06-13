@@ -97,7 +97,7 @@ class Tenant
 
     public function init($id = null, bool $isCheck = true)
     {
-        if (empty($id)) {
+        if (empty($id) && $isCheck) {
             $request = $this->container->get(RequestInterface::class);
             $id = $request->header('x-tenant-id');
             if (empty($id)) {
