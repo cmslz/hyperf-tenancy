@@ -82,7 +82,7 @@ class Tenant
      */
     public function getCentralConnection(): string
     {
-        return env('tenancy.database.central_connection', 'central');
+        return config('tenancy.database.central_connection', 'central');
     }
 
     /**
@@ -92,7 +92,7 @@ class Tenant
      */
     public function getTenantDbPrefix(): string
     {
-        return env('tenancy.database.tenant_prefix', 'tenant_');
+        return config('tenancy.database.tenant_prefix', 'tenant_');
     }
 
     public function init($id = null, bool $isCheck = true)
