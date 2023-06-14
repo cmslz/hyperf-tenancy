@@ -167,16 +167,26 @@ if (!function_exists('tenant_redis')) {
     }
 }
 
-if (!function_exists('queue_push')) {
+if (!function_exists('tenant_queue_push')) {
     /**
+     * 租户队列
      * Push a job to async queue.
      */
-    function queue_push(JobInterface $job, int $delay = 0, string $key = ''): bool
+    function tenant_queue_push(JobInterface $job, int $delay = 0): bool
     {
-        if (empty($key)) {
-            $key = env('tenancy.async_queue.tenant_connection', 'default');
-        }
-        $driver = di()->get(DriverFactory::class)->get($key);
+        $driver = di()->get(DriverFactory::class)->get(env('tenancy.async_queue.tenant_connection', 'tenant'));
+        return $driver->push($job, $delay);
+    }
+}
+
+if (!function_exists('queue_push')) {
+    /**
+     * 中央域队列
+     * Push a job to async queue.
+     */
+    function queue_push(JobInterface $job, int $delay = 0): bool
+    {
+        $driver = di()->get(DriverFactory::class)->get(env('tenancy.async_queue.central_connection', 'central'));
         return $driver->push($job, $delay);
     }
 }

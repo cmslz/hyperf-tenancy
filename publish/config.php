@@ -15,7 +15,7 @@ return [
     'database' => [
         'central_connection' => env('DB_CONNECTION', 'central'), // 不允许设置default
         'tenant_prefix' => 'tenant_', // 租户数据库前缀
-        'base_database' => ''
+        'base_database' => 'tenant_base'
     ],
     'cache' => [
         'tenant_prefix' => 'tenant_',
@@ -23,6 +23,7 @@ return [
         'central_connection' => 'central'
     ],
     'async_queue' => [
+        'central_connection' => 'central', // 中央域队列池
         'tenant_connection' => 'tenant', // 队列连接
     ]
 ];
