@@ -174,7 +174,7 @@ if (!function_exists('tenant_queue_push')) {
      */
     function tenant_queue_push(JobInterface $job, int $delay = 0): bool
     {
-        $driver = di()->get(DriverFactory::class)->get(env('tenancy.async_queue.tenant_connection', 'tenant'));
+        $driver = di()->get(DriverFactory::class)->get(config('tenancy.async_queue.tenant_connection', 'tenant'));
         return $driver->push($job, $delay);
     }
 }
@@ -186,7 +186,7 @@ if (!function_exists('queue_push')) {
      */
     function queue_push(JobInterface $job, int $delay = 0): bool
     {
-        $driver = di()->get(DriverFactory::class)->get(env('tenancy.async_queue.central_connection', 'central'));
+        $driver = di()->get(DriverFactory::class)->get(config('tenancy.async_queue.central_connection', 'central'));
         return $driver->push($job, $delay);
     }
 }

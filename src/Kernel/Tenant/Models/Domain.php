@@ -50,7 +50,7 @@ class Domain extends Model
             return '';
         }
 
-        $scheme = config('app_env') === 'dev' ? 'http://' : 'https://';
+        $scheme = config('app_env') === 'local' ? 'http://' : 'https://';
         return $scheme . $domain;
     }
 
