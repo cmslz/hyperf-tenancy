@@ -14,12 +14,10 @@ class TenancyConfigProvider
     {
         return [
             'dependencies' => [
-                ...[
-                    \Hyperf\Contract\StdoutLoggerInterface::class => \Cmslz\HyperfTenancy\Kernel\Log\LoggerFactory::class,
-                    \Hyperf\Server\Listener\AfterWorkerStartListener::class => \Cmslz\HyperfTenancy\Kernel\Http\WorkerStartListener::class,
-                    \Psr\EventDispatcher\EventDispatcherInterface::class => \Cmslz\HyperfTenancy\Kernel\Event\EventDispatcherFactory::class,
-                    \Hyperf\Database\ConnectionResolverInterface::class => \Cmslz\HyperfTenancy\Kernel\Tenant\ConnectionResolver::class,
-                ]
+                \Hyperf\Contract\StdoutLoggerInterface::class => \Cmslz\HyperfTenancy\Kernel\Log\LoggerFactory::class,
+                \Hyperf\Server\Listener\AfterWorkerStartListener::class => \Cmslz\HyperfTenancy\Kernel\Http\WorkerStartListener::class,
+                \Psr\EventDispatcher\EventDispatcherInterface::class => \Cmslz\HyperfTenancy\Kernel\Event\EventDispatcherFactory::class,
+                \Hyperf\Database\ConnectionResolverInterface::class => \Cmslz\HyperfTenancy\Kernel\Tenant\ConnectionResolver::class,
             ],
             'commands' => [
                 ...[
