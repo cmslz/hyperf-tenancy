@@ -152,12 +152,12 @@ if (!function_exists('tenant_queue_push')) {
     }
 }
 
-if (!function_exists('queue_push')) {
+if (!function_exists('central_queue_push')) {
     /**
      * 中央域队列
      * Push a job to async queue.
      */
-    function queue_push(JobInterface $job, int $delay = 0): bool
+    function central_queue_push(JobInterface $job, int $delay = 0): bool
     {
         $driver = di()->get(DriverFactory::class)->get(config('tenancy.async_queue.central_connection', 'central'));
         return $driver->push($job, $delay);
