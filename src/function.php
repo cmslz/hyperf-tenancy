@@ -20,20 +20,6 @@ use Hyperf\Resource\Json\JsonResource;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-if (!function_exists('logger')) {
-    function logger(string $name = 'hyperf', string $group = 'default')
-    {
-        return ApplicationContext::getContainer()->get(LoggerFactory::class)->get($name, $group);
-    }
-}
-
-if (!function_exists('call')) {
-    function call($callback, array $args = [])
-    {
-        return \Hyperf\Support\call($callback, $args);
-    }
-}
-
 if (!function_exists('config_base')) {
     function config_base(): ConfigInterface
     {
@@ -57,19 +43,6 @@ if (!function_exists('di')) {
         }
 
         return $container;
-    }
-}
-if (!function_exists('config')) {
-    function config(string $key, mixed $default = null): mixed
-    {
-        return \Hyperf\Config\config($key, $default);
-    }
-}
-
-if (!function_exists('env')) {
-    function env($key, $default = null): mixed
-    {
-        return \Hyperf\Support\env($key, $default);
     }
 }
 

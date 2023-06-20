@@ -10,12 +10,22 @@ namespace Cmslz\HyperfTenancy\Kernel\Context;
 
 use Cmslz\HyperfTenancy\Kernel\Log\AppendRequestIdProcessor;
 use Hyperf\Context\Context;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Engine\Coroutine as Co;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerInterface;
 use Throwable;
 
 class Coroutine
 {
+    protected LoggerInterface $logger;
+
+    public function __construct(protected ContainerInterface $container)
+    {
+        $this->logger = $container->get(StdoutLoggerInterface::class);
+    }
+
     /**
      * @return int Returns the coroutine ID of the coroutine just created.
      * Returns -1 when coroutine create failed.
@@ -40,7 +50,7 @@ class Coroutine
                     );
                     call($callable);
                 } catch (Throwable $throwable) {
-                    logger()->warning((string)$throwable);
+                    $this->logger->warning((string)$throwable);
                 }
             }
         );
@@ -48,7 +58,7 @@ class Coroutine
         try {
             return $coroutine->getId();
         } catch (Throwable $throwable) {
-            logger()->warning((string)$throwable);
+            $this->logger->warning((string)$throwable);
             return -1;
         }
     }
