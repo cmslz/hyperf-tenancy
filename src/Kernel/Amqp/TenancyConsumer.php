@@ -11,7 +11,7 @@ use Hyperf\Amqp\Message\ConsumerMessage;
 use Hyperf\Amqp\Packer\Packer;
 use Hyperf\Context\ApplicationContext;
 
-class BaseConsumer extends ConsumerMessage
+abstract class TenancyConsumer extends ConsumerMessage
 {
     public function unserialize(string $data)
     {

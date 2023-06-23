@@ -11,7 +11,7 @@ use Hyperf\Amqp\Message\ProducerMessage;
 use Hyperf\Amqp\Packer\Packer;
 use Hyperf\Context\ApplicationContext;
 
-class BaseProducer extends ProducerMessage
+abstract class TenancyProducer extends ProducerMessage
 {
     public function serialize(): string
     {
