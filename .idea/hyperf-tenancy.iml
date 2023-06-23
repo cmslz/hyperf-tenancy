@@ -83,6 +83,12 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/hyperf/redis" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/swoole/ide-helper" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/hyperf/model-cache" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/hyperf/amqp" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/hyperf/process" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/paragonie/random_compat" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/paragonie/constant_time_encoding" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/php-amqplib/php-amqplib" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phpseclib/phpseclib" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

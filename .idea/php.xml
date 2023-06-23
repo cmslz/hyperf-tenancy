@@ -80,6 +80,12 @@
       <path value="$PROJECT_DIR$/vendor/hyperf/redis" />
       <path value="$PROJECT_DIR$/vendor/swoole/ide-helper" />
       <path value="$PROJECT_DIR$/vendor/hyperf/model-cache" />
+      <path value="$PROJECT_DIR$/vendor/hyperf/amqp" />
+      <path value="$PROJECT_DIR$/vendor/hyperf/process" />
+      <path value="$PROJECT_DIR$/vendor/paragonie/random_compat" />
+      <path value="$PROJECT_DIR$/vendor/paragonie/constant_time_encoding" />
+      <path value="$PROJECT_DIR$/vendor/php-amqplib/php-amqplib" />
+      <path value="$PROJECT_DIR$/vendor/phpseclib/phpseclib" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.0" />
