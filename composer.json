@@ -36,7 +36,6 @@
     "hyperf/paginator": "^3.0",
     "hyperf/resource": "^3.0",
     "hyperf/framework": "^3.0",
-    "hyperf/async-queue": "^3.0",
     "hyperf/database": "^3.0",
     "hyperf/db-connection": "^3.0",
     "hyperf/config": "^3.0",

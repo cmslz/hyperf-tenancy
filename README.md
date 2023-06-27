@@ -35,10 +35,6 @@ return [
 ];
 ```
 
-- async_queue.php
-
-> driver:Cmslz\HyperfTenancy\Kernel\Tenant\AsyncQueue\RedisDriver::class
-
 - cache.php
 
 ```PHP
