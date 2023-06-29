@@ -26,7 +26,7 @@ trait HasATenantsOption
      */
     protected function prepareDatabase()
     {
-        $this->migrator->setConnection(tenancy()->getTenantDbPrefix() . tenancy()->getId());
+        $this->migrator->setConnection(tenancy()->getTenantDbPrefix());
 
         if (!$this->migrator->repositoryExists()) {
             $this->call('migrate:install', array_filter([

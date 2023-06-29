@@ -32,13 +32,19 @@ class TenancyRollback extends RollbackCommand
 
     public function handle()
     {
-        if (!$this->confirmToProceed()) {
-            return;
-        }
-
         tenancy()->runForMultiple($this->input->getOption('tenants'), function ($tenant) {
             $this->line("Tenant: {$tenant['id']}");
-            parent::handle();
+            if (! $this->confirmToProceed()) {
+                return;
+            }
+            $this->migrator->setConnection(tenancy()->getTenantDbPrefix());
+            $this->migrator->setOutput($this->output)->rollback(
+                $this->getMigrationPaths(),
+                [
+                    'pretend' => $this->input->getOption('pretend'),
+                    'step' => (int)$this->input->getOption('step'),
+                ]
+            );
         });
     }
 }
