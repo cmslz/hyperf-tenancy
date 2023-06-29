@@ -70,8 +70,6 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/hyperf/resource" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/fig/http-message-util" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/hyperf/framework" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/hyperf/async-queue" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/hyperf/command" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/translation" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/translation-contracts" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/nesbot/carbon" />

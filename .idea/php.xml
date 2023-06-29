@@ -67,8 +67,6 @@
       <path value="$PROJECT_DIR$/vendor/hyperf/resource" />
       <path value="$PROJECT_DIR$/vendor/fig/http-message-util" />
       <path value="$PROJECT_DIR$/vendor/hyperf/framework" />
-      <path value="$PROJECT_DIR$/vendor/hyperf/async-queue" />
-      <path value="$PROJECT_DIR$/vendor/hyperf/command" />
       <path value="$PROJECT_DIR$/vendor/symfony/translation" />
       <path value="$PROJECT_DIR$/vendor/symfony/translation-contracts" />
       <path value="$PROJECT_DIR$/vendor/nesbot/carbon" />

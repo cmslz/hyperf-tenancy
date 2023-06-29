@@ -17,14 +17,9 @@ trait HasATenantsOption
     {
         $options = parent::getOptions();
         array_push($options, ['tenants', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL, '', null]);
-        foreach ($options as &$option) {
-            // 设置默认链接项为中央域链接
-            if ($option[0] === 'database' && empty($option[1])) {
-                $option[1] = tenancy()->getCentralConnection();
-            }
-        }
         return $options;
     }
+
 
     /**
      * Prepare the migration database for running.
