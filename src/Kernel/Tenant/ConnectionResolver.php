@@ -30,7 +30,7 @@ class ConnectionResolver extends \Hyperf\DbConnection\ConnectionResolver
      */
     public function connection($name = null): ConnectionInterface
     {
-        if ($name !== tenancy()->getCentralConnection()) {
+        if ($name === tenancy()->getTenantDbPrefix()) {
             $id = tenancy()->getId();
             $name = tenancy()->getTenantDbPrefix() . $id;
             $key = 'databases.' . tenancy()->getCentralConnection();
