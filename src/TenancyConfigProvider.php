@@ -17,8 +17,8 @@ class TenancyConfigProvider
             ],
             'commands' => [
                 ...[
-                    Commands\Migrate::class,
-                    Commands\Rollback::class,
+                    Commands\TenancyMigrate::class,
+                    Commands\TenancyRollback::class,
                 ]
             ],
             'listeners'=>[

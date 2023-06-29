@@ -11,6 +11,8 @@ namespace Cmslz\HyperfTenancy\Kernel\Tenant;
 
 use InvalidArgumentException;
 use Hyperf\Database\ConnectionInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class ConnectionResolver extends \Hyperf\DbConnection\ConnectionResolver
 {
@@ -23,12 +25,12 @@ class ConnectionResolver extends \Hyperf\DbConnection\ConnectionResolver
      * Get a database connection instance.
      * @param null $name
      * @return ConnectionInterface
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function connection($name = null): ConnectionInterface
     {
-        if ($name !== tenancy()->getCentralConnection()) {
+        if (!empty($name) && str_contains($name, tenancy()->getTenantDbPrefix())) {
             $id = tenancy()->getId();
             $name = tenancy()->getTenantDbPrefix() . $id;
             $key = 'databases.' . tenancy()->getCentralConnection();

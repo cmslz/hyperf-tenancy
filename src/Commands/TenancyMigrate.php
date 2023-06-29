@@ -1,18 +1,17 @@
 <?php
-
-declare(strict_types=1);
 /**
  * Each engineer has a duty to keep the code elegant
- * Created by xiaobai at 2023/6/13 17:13
+ * Created by xiaobai at 2023/6/13 17:02
  */
 
 namespace Cmslz\HyperfTenancy\Commands;
 
+
 use Cmslz\HyperfTenancy\Concerns\HasATenantsOption;
-use Hyperf\Database\Commands\Migrations\RollbackCommand;
+use Hyperf\Database\Commands\Migrations\MigrateCommand;
 use Hyperf\Database\Migrations\Migrator;
 
-class Rollback extends RollbackCommand
+class TenancyMigrate extends MigrateCommand
 {
     use HasATenantsOption;
 
@@ -20,7 +19,7 @@ class Rollback extends RollbackCommand
     {
         $this->migrator = $migrator;
         parent::__construct($migrator);
-        parent::setName('tenants:rollback');
+        parent::setName('tenants:migrate');
     }
 
     /**
@@ -28,14 +27,15 @@ class Rollback extends RollbackCommand
      *
      * @var string
      */
-    protected string $description = 'Rollback migrations for tenant(s).';
+    protected string $description = 'Run migrations for tenant(s)';
 
+    /**
+     * Execute the console command.
+     * @return mixed
+     * @throws \Exception
+     */
     public function handle()
     {
-        if (!$this->confirmToProceed()) {
-            return;
-        }
-
         tenancy()->runForMultiple($this->input->getOption('tenants'), function ($tenant) {
             $this->line("Tenant: {$tenant['id']}");
             parent::handle();
