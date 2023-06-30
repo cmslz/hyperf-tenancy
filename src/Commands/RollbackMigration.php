@@ -9,10 +9,11 @@ declare(strict_types=1);
 namespace Cmslz\HyperfTenancy\Commands;
 
 use Cmslz\HyperfTenancy\Concerns\HasATenantsOption;
+use Cmslz\HyperfTenancy\Kernel\Tenancy;
 use Hyperf\Database\Commands\Migrations\RollbackCommand;
 use Hyperf\Database\Migrations\Migrator;
 
-class TenancyRollback extends RollbackCommand
+class RollbackMigration extends RollbackCommand
 {
     use HasATenantsOption;
 
@@ -32,12 +33,12 @@ class TenancyRollback extends RollbackCommand
 
     public function handle()
     {
-        tenancy()->runForMultiple($this->input->getOption('tenants'), function ($tenant) {
+        Tenancy::runForMultiple($this->input->getOption('tenants'), function ($tenant) {
             $this->line("Tenant: {$tenant['id']}");
-            if (! $this->confirmToProceed()) {
+            if (!$this->confirmToProceed()) {
                 return;
             }
-            $this->migrator->setConnection(tenancy()->getTenantDbPrefix());
+            $this->migrator->setConnection(Tenancy::initDbConnectionName(Tenancy::getTenantDbPrefix()));
             $this->migrator->setOutput($this->output)->rollback(
                 $this->getMigrationPaths(),
                 [

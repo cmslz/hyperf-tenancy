@@ -8,10 +8,12 @@ declare(strict_types=1);
 
 namespace Cmslz\HyperfTenancy\Kernel\Tenant;
 
+use Cmslz\HyperfTenancy\Kernel\Tenancy;
+
 trait TenancyConnection
 {
     public function getConnectionName()
     {
-        return tenancy()->getTenantDbPrefix();
+        return Tenancy::getTenantDbPrefix();
     }
 }

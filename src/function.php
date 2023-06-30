@@ -16,6 +16,7 @@ use Hyperf\Resource\Json\JsonResource;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Cmslz\HyperfTenancy\Kernel\Tenancy;
 
 if (!function_exists('config_base')) {
     function config_base(): ConfigInterface
@@ -85,7 +86,7 @@ if (!function_exists('tenant_cache')) {
      */
     function tenant_cache(): DriverInterface
     {
-        return tenancy()->cache();
+        return Tenancy::cache();
     }
 }
 
@@ -100,6 +101,6 @@ if (!function_exists('tenant_redis')) {
      */
     function tenant_redis(): RedisProxy
     {
-        return tenancy()->redis();
+        return Tenancy::redis();
     }
 }

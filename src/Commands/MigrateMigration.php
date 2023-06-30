@@ -8,10 +8,11 @@ namespace Cmslz\HyperfTenancy\Commands;
 
 
 use Cmslz\HyperfTenancy\Concerns\HasATenantsOption;
+use Cmslz\HyperfTenancy\Kernel\Tenancy;
 use Hyperf\Database\Commands\Migrations\MigrateCommand;
 use Hyperf\Database\Migrations\Migrator;
 
-class TenancyMigrate extends MigrateCommand
+class MigrateMigration extends MigrateCommand
 {
     use HasATenantsOption;
 
@@ -36,8 +37,13 @@ class TenancyMigrate extends MigrateCommand
      */
     public function handle()
     {
-        tenancy()->runForMultiple($this->input->getOption('tenants'), function ($tenant) {
+        Tenancy::runForMultiple($this->input->getOption('tenants'), function ($tenant) {
             $this->line("Tenant: {$tenant['id']}");
+
+            if (!$this->confirmToProceed()) {
+                return;
+            }
+            $this->input->setOption('database', Tenancy::initDbConnectionName(Tenancy::getTenantDbPrefix()));
             parent::handle();
         });
     }

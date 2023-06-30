@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace Cmslz\HyperfTenancy\Concerns;
 
 
+use Cmslz\HyperfTenancy\Kernel\Tenancy;
 use Symfony\Component\Console\Input\InputOption;
 
 trait HasATenantsOption
@@ -20,26 +21,11 @@ trait HasATenantsOption
         return $options;
     }
 
-
-    /**
-     * Prepare the migration database for running.
-     */
-    protected function prepareDatabase()
-    {
-        $this->migrator->setConnection(tenancy()->getTenantDbPrefix());
-
-        if (!$this->migrator->repositoryExists()) {
-            $this->call('migrate:install', array_filter([
-                '--database' => $this->input->getOption('database'),
-            ]));
-        }
-    }
-
     protected function getTenants()
     {
-        return tenancy()->tenantModel()::query()
+        return Tenancy::tenantModel()::query()
             ->when($this->input->getOption('tenants'), function ($query) {
-                $query->whereIn(tenancy()->tenantModel()->primaryKey, $this->input->getOption('tenants'));
+                $query->whereIn(Tenancy::tenantModel()->primaryKey, $this->input->getOption('tenants'));
             })
             ->cursor();
     }

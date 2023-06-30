@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace Cmslz\HyperfTenancy\Kernel\Tenant;
 
 
-use InvalidArgumentException;
+use Cmslz\HyperfTenancy\Kernel\Tenancy;
 use Hyperf\Database\ConnectionInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -30,21 +30,6 @@ class ConnectionResolver extends \Hyperf\DbConnection\ConnectionResolver
      */
     public function connection($name = null): ConnectionInterface
     {
-        if ($name === tenancy()->getTenantDbPrefix()) {
-            $id = tenancy()->getId();
-            $name = tenancy()->getTenantDbPrefix() . $id;
-            $key = 'databases.' . tenancy()->getCentralConnection();
-
-            if (empty(config_base()->has($key))) {
-                throw new InvalidArgumentException(sprintf('config[%s] is not exist!', $key));
-            }
-            $tenantDatabaseConfig = config_base()->get($key);
-            $tenantDatabaseConfig["database"] = $name;
-            if (isset($tenantDatabaseConfig['cache']['prefix'])) {
-                $tenantDatabaseConfig['cache']['prefix'] .= $id;
-            }
-            config_base()->set("databases." . $name, $tenantDatabaseConfig);
-        }
-        return parent::connection($name);
+        return parent::connection(Tenancy::initDbConnectionName($name));
     }
 }

@@ -9,7 +9,6 @@ namespace Cmslz\HyperfTenancy;
 
 class TenancyConfigProvider
 {
-
     public function __invoke(): array
     {
         return [
@@ -17,11 +16,12 @@ class TenancyConfigProvider
             ],
             'commands' => [
                 ...[
-                    Commands\TenancyMigrate::class,
-                    Commands\TenancyRollback::class,
+                    Commands\MigrateMigration::class,
+                    Commands\RollbackMigration::class,
+                    Commands\ModelMigration::class
                 ]
             ],
-            'listeners'=>[
+            'listeners' => [
             ],
             'annotations' => [
                 'scan' => [
