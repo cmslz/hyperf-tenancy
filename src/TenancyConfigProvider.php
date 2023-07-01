@@ -18,7 +18,8 @@ class TenancyConfigProvider
                 ...[
                     Commands\MigrateMigration::class,
                     Commands\RollbackMigration::class,
-                    Commands\ModelMigration::class
+                    Commands\ModelMigration::class,
+                    Commands\GenMigration::class,
                 ]
             ],
             'listeners' => [
