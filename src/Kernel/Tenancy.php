@@ -11,10 +11,14 @@ use Cmslz\HyperfTenancy\Kernel\Tenant\Cache\CacheManager;
 use Cmslz\HyperfTenancy\Kernel\Tenant\Models\Domain;
 use Cmslz\HyperfTenancy\Kernel\Tenant\Models\Tenants as TenantModel;
 use Cmslz\HyperfTenancy\Kernel\Tenant\Tenant;
+use Exception;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Redis\RedisFactory;
+use Hyperf\Redis\RedisProxy;
+use Hyperf\Support\Exception\InvalidArgumentException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Redis;
 
 class Tenancy
 {
@@ -99,7 +103,7 @@ class Tenancy
 
     /**
      * 租户通用Redis
-     * @return \Hyperf\Redis\RedisProxy
+     * @return RedisProxy
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface Created by xiaobai at 2023/2/14 18:47
      */
