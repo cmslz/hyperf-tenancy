@@ -151,6 +151,9 @@ class Tenancy
 
     public static function initDbConnectionName(string $name = null): ?string
     {
+        if (empty($name) && !empty(tenancy()->getId(false))) {
+            $name = Tenancy::getTenantDbPrefix();
+        }
         if ($name === self::getTenantDbPrefix()) {
             $id = tenancy()->getId();
             $name = self::tenancyDatabase();

@@ -30,9 +30,6 @@ class ConnectionResolver extends \Hyperf\DbConnection\ConnectionResolver
      */
     public function connection($name = null): ConnectionInterface
     {
-        if (empty($name) && !empty(tenancy()->getId(false))) {
-            $name = Tenancy::getTenantDbPrefix();
-        }
         return parent::connection(Tenancy::initDbConnectionName($name));
     }
 }
