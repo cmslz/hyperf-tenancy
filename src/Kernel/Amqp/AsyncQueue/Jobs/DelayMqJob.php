@@ -9,10 +9,13 @@ declare(strict_types=1);
 namespace Cmslz\HyperfTenancy\Kernel\Amqp\AsyncQueue\Jobs;
 
 
+use Exception;
 use Hyperf\AsyncQueue\Job;
 use Hyperf\Amqp\Message\ProducerMessage;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Amqp\Producer;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 /**
  * 延迟队列
@@ -21,7 +24,7 @@ use Hyperf\Amqp\Producer;
  */
 class DelayMqJob extends Job
 {
-    public $params;
+    public mixed $params;
 
     public string $producerClassName;
 
@@ -35,27 +38,31 @@ class DelayMqJob extends Job
      * @param int $maxAttempts
      * Created by xiaobai at 2023/7/6 10:11
      */
-    public function setMaxAttempts(int $maxAttempts)
+    public function setMaxAttempts(int $maxAttempts): static
     {
         $this->maxAttempts = $maxAttempts;
+        return $this;
     }
-    
+
+    /**
+     * @throws Exception
+     */
     public function __construct(string $producerClassName, ...$params)
     {
         if (!class_exists($producerClassName)) {
-            throw new \Exception(sprintf('%s class no exist'), $producerClassName);
+            throw new Exception(sprintf('%s class no exist', $producerClassName));
         }
         $producerClass = new $producerClassName(...$params);
         if (!$producerClass instanceof ProducerMessage) {
-            throw new \Exception(sprintf('%s class example not ProducerMessage', $producerClassName));
+            throw new Exception(sprintf('%s class example not ProducerMessage', $producerClassName));
         }
         $this->params = $params;
         $this->producerClassName = $producerClassName;
     }
 
     /**
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      * Created by xiaobai at 2023/7/6 10:13
      */
     public function handle()

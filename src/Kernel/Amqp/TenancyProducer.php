@@ -25,15 +25,19 @@ abstract class TenancyProducer extends ProducerMessage
     /**
      * 设置延迟时间
      * @param int $delay
+     * @param int $maxAttempts // 设置重试次数
      * @param string $key
      * @return bool
      * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     * Created by xiaobai at 2023/7/6 10:38
+     * @throws \Psr\Container\NotFoundExceptionInterface Created by xiaobai at 2023/7/6 10:38
      */
-    public function delay(int $delay, string $key = 'default'): bool
+    public function delay(int $delay, int $maxAttempts = 0, string $key = 'default'): bool
     {
         $driver = di()->get(DriverFactory::class)->get($key);
-        return $driver->push(new DelayMqJob(static::class, ...$this->payload), $delay);
+        $job = new DelayMqJob(static::class, ...$this->payload);
+        if (!empty($maxAttempts)) {
+            $job->setMaxAttempts($maxAttempts);
+        }
+        return $driver->push($job, $delay);
     }
 }
