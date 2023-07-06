@@ -93,7 +93,7 @@ if (!function_exists('tenant_cache')) {
 
 if (!function_exists('tenant_redis')) {
     /**
-     * 中央域通用redis
+     * 租户通用redis
      * @return RedisProxy
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface

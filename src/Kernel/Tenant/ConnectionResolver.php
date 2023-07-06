@@ -30,6 +30,7 @@ class ConnectionResolver extends \Hyperf\DbConnection\ConnectionResolver
      */
     public function connection($name = null): ConnectionInterface
     {
-        return parent::connection(Tenancy::initDbConnectionName($name));
+        $name = parent::connection(Tenancy::initDbConnectionName($name));
+        return $name;
     }
 }

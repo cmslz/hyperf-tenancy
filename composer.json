@@ -41,7 +41,8 @@
     "hyperf/config": "^3.0",
     "hyperf/redis": "^3.0",
     "hyperf/model-cache": "^3.0",
-    "hyperf/amqp": "^3.0"
+    "hyperf/amqp": "^3.0",
+    "hyperf/async-queue": "^3.0"
   },
   "require-dev": {
     "swoole/ide-helper": "^5.0"
