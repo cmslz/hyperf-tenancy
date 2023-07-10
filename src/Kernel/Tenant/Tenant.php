@@ -11,10 +11,12 @@ namespace Cmslz\HyperfTenancy\Kernel\Tenant;
 use Cmslz\HyperfTenancy\Kernel\Tenancy;
 use Exception;
 use Hyperf\Context\ApplicationContext;
+use Hyperf\Context\Context;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Support\Traits\StaticInstance;
 use InvalidArgumentException;
 use Cmslz\HyperfTenancy\Kernel\Tenant\Models\Tenants as TenantModel;
+use Psr\Http\Message\ServerRequestInterface;
 
 class Tenant
 {
@@ -27,9 +29,20 @@ class Tenant
 
     protected TenantModel|null $tenant;
 
+    private function checkIfHttpRequest(): bool
+    {
+        $request = Context::get(ServerRequestInterface::class);
+        if ($request !== null) {
+            // 存在 HTTP 请求
+            return true;
+        }
+        // 不存在 HTTP 请求
+        return false;
+    }
+
     public function init($id = null, bool $isCheck = true)
     {
-        if (empty($id) && $isCheck) {
+        if (empty($id) && $isCheck && $this->checkIfHttpRequest()) {
             $request = ApplicationContext::getContainer()->get(RequestInterface::class);
             $id = $request->header('x-tenant-id');
             if (empty($id)) {
