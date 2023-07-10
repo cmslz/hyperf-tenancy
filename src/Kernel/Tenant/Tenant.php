@@ -97,9 +97,9 @@ class Tenant
      * @throws Exception
      * Created by xiaobai at 2023/2/14 14:02
      */
-    public function runForMultiple($tenans, callable $callback)
+    public function runForMultiple($tenants, callable $callable)
     {
-        Tenancy::runForMultiple($tenans, $callback);
+        Tenancy::runForMultiple($tenants, $callable);
     }
 
 }
