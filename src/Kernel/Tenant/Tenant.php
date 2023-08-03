@@ -8,13 +8,13 @@ declare(strict_types=1);
 
 namespace Cmslz\HyperfTenancy\Kernel\Tenant;
 
+use Cmslz\HyperfTenancy\Kernel\Exceptions\TenancyException;
 use Cmslz\HyperfTenancy\Kernel\Tenancy;
 use Exception;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Support\Traits\StaticInstance;
-use InvalidArgumentException;
 use Cmslz\HyperfTenancy\Kernel\Tenant\Models\Tenants as TenantModel;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -40,6 +40,11 @@ class Tenant
         return false;
     }
 
+    /**
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws TenancyException
+     */
     public function init($id = null, bool $isCheck = true)
     {
         if (empty($id) && $isCheck && $this->checkIfHttpRequest()) {
@@ -54,7 +59,7 @@ class Tenant
         }
         // 过滤根目录
         if (empty($id) && $isCheck) {
-            throw new InvalidArgumentException('The tenant is invalid.');
+            throw new TenancyException('The tenant is invalid.');
         }
 
         /**
@@ -62,7 +67,7 @@ class Tenant
          */
         $tenant = Tenancy::tenantModel()::query()->where('id', $id)->first();
         if (empty($tenant) && $isCheck) {
-            throw new InvalidArgumentException(
+            throw new TenancyException(
                 sprintf('The tenant %s is invalid', $id)
             );
         }
@@ -71,11 +76,17 @@ class Tenant
         return $tenant;
     }
 
-    public function getId(bool $isCheck = true)
+    /**
+     * @param bool $isCheck
+     * @return string
+     * @throws TenancyException
+     * Created by xiaobai at 2023/8/3 13:47
+     */
+    public function getId(bool $isCheck = true): string
     {
         // 过滤根目录
         if (empty($this->id) && $isCheck) {
-            throw new InvalidArgumentException('The tenant is invalid.');
+            throw new TenancyException('The tenant is invalid.');
         }
         return $this->id;
     }

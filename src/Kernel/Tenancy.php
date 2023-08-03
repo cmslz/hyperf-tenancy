@@ -7,15 +7,14 @@
 namespace Cmslz\HyperfTenancy\Kernel;
 
 
+use Cmslz\HyperfTenancy\Kernel\Exceptions\TenancyException;
 use Cmslz\HyperfTenancy\Kernel\Tenant\Cache\CacheManager;
 use Cmslz\HyperfTenancy\Kernel\Tenant\Models\Domain;
 use Cmslz\HyperfTenancy\Kernel\Tenant\Models\Tenants as TenantModel;
 use Cmslz\HyperfTenancy\Kernel\Tenant\Tenant;
-use Exception;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Redis\RedisProxy;
-use Hyperf\Support\Exception\InvalidArgumentException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Redis;
@@ -23,21 +22,21 @@ use Redis;
 class Tenancy
 {
     /**
-     * @throws Exception
+     * @throws TenancyException
      */
     public static function tenantModel(): TenantModel
     {
         $class = config('tenancy.tenant_model');
         $tenantModel = new $class();
         if (!$tenantModel instanceof TenantModel) {
-            throw new Exception('tenant_model instanceof error!');
+            throw new TenancyException('tenant_model instanceof error!');
         }
         return $tenantModel;
     }
 
     /**
      * @return Domain
-     * @throws Exception
+     * @throws TenancyException
      * Created by xiaobai at 2023/6/13 15:51
      */
     public static function domainModel(): Domain
@@ -46,7 +45,7 @@ class Tenancy
         $domainModel = new $class();
 
         if (!$domainModel instanceof Domain) {
-            throw new Exception('domain_model instanceof error!');
+            throw new TenancyException('domain_model instanceof error!');
         }
         return $domainModel;
     }
@@ -75,7 +74,8 @@ class Tenancy
      * 指定租户内执行
      * @param $tenants
      * @param callable $callable
-     * @throws Exception
+     * @throws TenancyException
+     * @throws \Exception
      * Created by xiaobai at 2023/2/14 14:02
      */
     public static function runForMultiple($tenants, callable $callable)
@@ -94,7 +94,7 @@ class Tenancy
                 call($callable, [tenancy()->init($tenantId)]);
                 tenancy()->init($originalTenantId, false);
             }
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             throw $exception;
         } finally {
             tenancy()->init($originalTenantId, false);
@@ -149,6 +149,12 @@ class Tenancy
         return self::getTenantDbPrefix() . $id;
     }
 
+    /**
+     * @param string|null $name
+     * @return string|null
+     * @throws TenancyException
+     * Created by xiaobai at 2023/8/3 13:46
+     */
     public static function initDbConnectionName(string $name = null): ?string
     {
         if (empty($name) && !empty(tenancy()->getId(false))) {
@@ -160,7 +166,7 @@ class Tenancy
             $key = 'databases.' . self::getCentralConnection();
 
             if (empty(config_base()->has($key))) {
-                throw new InvalidArgumentException(sprintf('config[%s] is not exist!', $key));
+                throw new TenancyException(sprintf('config[%s] is not exist!', $key));
             }
             $tenantDatabaseConfig = config_base()->get($key);
             $tenantDatabaseConfig["database"] = $name;

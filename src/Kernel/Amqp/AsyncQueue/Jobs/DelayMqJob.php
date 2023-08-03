@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace Cmslz\HyperfTenancy\Kernel\Amqp\AsyncQueue\Jobs;
 
 
+use Cmslz\HyperfTenancy\Kernel\Exceptions\TenancyException;
 use Exception;
 use Hyperf\AsyncQueue\Job;
 use Hyperf\Amqp\Message\ProducerMessage;
@@ -47,14 +48,14 @@ class DelayMqJob extends Job
     /**
      * @throws Exception
      */
-    public function __construct(string $producerClassName, ...$params)
+    public function __construct(string $producerClassName, $params)
     {
         if (!class_exists($producerClassName)) {
-            throw new Exception(sprintf('%s class no exist', $producerClassName));
+            throw new TenancyException(sprintf('%s class no exist', $producerClassName));
         }
-        $producerClass = new $producerClassName(...$params);
+        $producerClass = new $producerClassName($params);
         if (!$producerClass instanceof ProducerMessage) {
-            throw new Exception(sprintf('%s class example not ProducerMessage', $producerClassName));
+            throw new TenancyException(sprintf('%s class example not ProducerMessage', $producerClassName));
         }
         $this->params = $params;
         $this->producerClassName = $producerClassName;
@@ -68,7 +69,7 @@ class DelayMqJob extends Job
     public function handle()
     {
         $className = $this->producerClassName;
-        $class = new $className(...$this->params);
+        $class = new $className($this->params);
         if (function_exists('newQueue')) {
             newQueue($class);
         } else {
