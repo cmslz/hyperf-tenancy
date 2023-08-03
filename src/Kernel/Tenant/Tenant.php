@@ -78,11 +78,11 @@ class Tenant
 
     /**
      * @param bool $isCheck
-     * @return string
+     * @return string|null
      * @throws TenancyException
      * Created by xiaobai at 2023/8/3 13:47
      */
-    public function getId(bool $isCheck = true): string
+    public function getId(bool $isCheck = true): ?string
     {
         // 过滤根目录
         if (empty($this->id) && $isCheck) {

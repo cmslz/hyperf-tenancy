@@ -12,6 +12,7 @@ use Cmslz\HyperfTenancy\Kernel\Tenant\Cache\CacheManager;
 use Cmslz\HyperfTenancy\Kernel\Tenant\Models\Domain;
 use Cmslz\HyperfTenancy\Kernel\Tenant\Models\Tenants as TenantModel;
 use Cmslz\HyperfTenancy\Kernel\Tenant\Tenant;
+use Exception;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Redis\RedisProxy;
@@ -74,9 +75,9 @@ class Tenancy
      * 指定租户内执行
      * @param $tenants
      * @param callable $callable
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      * @throws TenancyException
-     * @throws \Exception
-     * Created by xiaobai at 2023/2/14 14:02
      */
     public static function runForMultiple($tenants, callable $callable)
     {
@@ -94,7 +95,7 @@ class Tenancy
                 call($callable, [tenancy()->init($tenantId)]);
                 tenancy()->init($originalTenantId, false);
             }
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             throw $exception;
         } finally {
             tenancy()->init($originalTenantId, false);
@@ -105,7 +106,9 @@ class Tenancy
      * 租户通用Redis
      * @return RedisProxy
      * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface Created by xiaobai at 2023/2/14 18:47
+     * @throws NotFoundExceptionInterface
+     * @throws TenancyException
+     * Created by xiaobai at 2023/2/14 18:47
      */
     public static function redis()
     {
@@ -140,6 +143,7 @@ class Tenancy
      * @param string|null $id
      * @return string
      * Created by xiaobai at 2023/6/30 10:06
+     * @throws TenancyException
      */
     public static function tenancyDatabase(string $id = null)
     {
