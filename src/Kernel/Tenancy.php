@@ -20,6 +20,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Redis;
 use Swoole\Coroutine;
+use Swoole\Coroutine\Channel;
 
 class Tenancy
 {
@@ -90,13 +91,22 @@ class Tenancy
 
         // Wrap string in array
         $tenants = is_string($tenants) ? [$tenants] : $tenants;
+
         try {
             foreach ($tenants as $tenantId) {
-                Coroutine::create(
-                    function () use ($tenantId, $callable) {
-                        call($callable, [tenancy()->init($tenantId)]);
-                    }
-                );
+                $channel = new Channel();
+                try {
+                    Coroutine::create(
+                        function () use ($channel, $tenantId, $callable) {
+                            call($callable, [tenancy()->init($tenantId)]);
+                            $channel->push($tenantId);
+                        }
+                    );
+                } catch (Exception $exception) {
+                    $channel->push($exception);
+                } finally {
+                    $channel->pop();
+                }
             }
         } catch (Exception $exception) {
             throw $exception;
