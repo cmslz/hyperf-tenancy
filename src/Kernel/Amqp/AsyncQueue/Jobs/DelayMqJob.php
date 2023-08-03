@@ -48,12 +48,12 @@ class DelayMqJob extends Job
     /**
      * @throws Exception
      */
-    public function __construct(string $producerClassName, $params)
+    public function __construct(string $producerClassName, ...$params)
     {
         if (!class_exists($producerClassName)) {
             throw new TenancyException(sprintf('%s class no exist', $producerClassName));
         }
-        $producerClass = new $producerClassName($params);
+        $producerClass = new $producerClassName(...$params);
         if (!$producerClass instanceof ProducerMessage) {
             throw new TenancyException(sprintf('%s class example not ProducerMessage', $producerClassName));
         }
@@ -69,7 +69,7 @@ class DelayMqJob extends Job
     public function handle()
     {
         $className = $this->producerClassName;
-        $class = new $className($this->params);
+        $class = new $className(...$this->params);
         if (function_exists('newQueue')) {
             newQueue($class);
         } else {
