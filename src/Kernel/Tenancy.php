@@ -14,8 +14,13 @@ use Cmslz\HyperfTenancy\Kernel\Tenant\Models\Tenants as TenantModel;
 use Cmslz\HyperfTenancy\Kernel\Tenant\Tenant;
 use Exception;
 use Hyperf\Context\ApplicationContext;
+use Hyperf\Context\Context;
+use Hyperf\Database\ConnectionInterface;
+use Hyperf\DbConnection\Db;
+use Hyperf\DbConnection\Pool\PoolFactory;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Redis\RedisProxy;
+use phpseclib3\File\ASN1\Maps\IssuerAltName;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Redis;
@@ -91,25 +96,15 @@ class Tenancy
 
         // Wrap string in array
         $tenants = is_string($tenants) ? [$tenants] : $tenants;
-
+        $originalTenantId = tenancy()->getId(false);
         try {
             foreach ($tenants as $tenantId) {
-                $channel = new Channel();
-                try {
-                    Coroutine::create(
-                        function () use ($channel, $tenantId, $callable) {
-                            call($callable, [tenancy()->init($tenantId)]);
-                            $channel->push($tenantId);
-                        }
-                    );
-                } catch (Exception $exception) {
-                    $channel->push($exception);
-                } finally {
-                    $channel->pop();
-                }
+                call($callable, [tenancy()->init($tenantId)]);
             }
         } catch (Exception $exception) {
             throw $exception;
+        } finally {
+            tenancy()->init($originalTenantId, false);
         }
     }
 
