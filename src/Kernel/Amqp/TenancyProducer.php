@@ -33,7 +33,7 @@ abstract class TenancyProducer extends ProducerMessage
      */
     public function delay(int $delay, int $maxAttempts = 0, string $key = 'default'): bool
     {
-        $driver = di(tenancy()->getId(false))->get(DriverFactory::class)->get($key);
+        $driver = di()->get(DriverFactory::class)->get($key);
         $job = new DelayMqJob(static::class, $this->payload);
         if (!empty($maxAttempts)) {
             $job->setMaxAttempts($maxAttempts);
