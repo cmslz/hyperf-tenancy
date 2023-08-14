@@ -15,17 +15,12 @@ use Cmslz\HyperfTenancy\Kernel\Tenant\Tenant;
 use Exception;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
-use Hyperf\Database\ConnectionInterface;
-use Hyperf\DbConnection\Db;
-use Hyperf\DbConnection\Pool\PoolFactory;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Redis\RedisProxy;
-use phpseclib3\File\ASN1\Maps\IssuerAltName;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Redis;
-use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 
 class Tenancy
@@ -87,7 +82,7 @@ class Tenancy
      * @throws NotFoundExceptionInterface
      * @throws TenancyException
      */
-    public static function runForMultiple($tenants, callable $callable)
+    public static function runForMultiple($tenants, callable $callable): void
     {
         // Convert null to all tenants
         $tenants = empty($tenants) ? self::tenantModel()::query()->distinct()->orderBy('created_at')->pluck('id')->toArray() : $tenants;
@@ -100,7 +95,19 @@ class Tenancy
         $originalTenantId = tenancy()->getId(false);
         try {
             foreach ($tenants as $tenantId) {
-                call($callable, [tenancy()->init($tenantId)]);
+                // 保证进程执行完毕后再执行下一个进程
+                $channel = new Channel(1);
+                $callable = function () use ($callable, $channel) {
+                    $result = call($callable);
+                    $channel->push($result);
+                    return $result;
+                };
+                \Swoole\Coroutine::create(
+                    function () use ($tenantId, $callable) {
+                        tenancy()->init($tenantId);
+                        call($callable, [tenancy()->getTenant()]);
+                    }
+                );
             }
         } catch (Exception $exception) {
             throw $exception;
