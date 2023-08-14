@@ -23,6 +23,7 @@ use Hyperf\Redis\RedisProxy;
 use phpseclib3\File\ASN1\Maps\IssuerAltName;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Redis;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
@@ -160,6 +161,22 @@ class Tenancy
     }
 
     /**
+     * 获取租户最大连接数
+     * @return int
+     */
+    public static function getTenantMaxConnections(): int
+    {
+        $tenantMaxConnections = config_base()->get('tenancy.database.max_connections', 0);
+        if (!self::checkIfHttpRequest() && config_base()->has('tenancy.database.console_max_connections')) {
+            $tenantConsoleMaxConnections = config_base()->get('tenancy.database.console_max_connections');
+            if (!empty($tenantConsoleMaxConnections)) {
+                $tenantMaxConnections = $tenantConsoleMaxConnections;
+            }
+        }
+        return intval($tenantMaxConnections);
+    }
+
+    /**
      * @param string|null $name
      * @return string|null
      * @throws TenancyException
@@ -183,8 +200,23 @@ class Tenancy
             if (isset($tenantDatabaseConfig['cache']['prefix'])) {
                 $tenantDatabaseConfig['cache']['prefix'] .= $id;
             }
+            $tenantMaxConnections = self::getTenantMaxConnections();
+            if (!empty($tenantMaxConnections) && isset($tenantDatabaseConfig['pool']['max_connections'])) {
+                $tenantDatabaseConfig['pool']['max_connections'] = $tenantMaxConnections;
+            }
             config_base()->set("databases." . $name, $tenantDatabaseConfig);
         }
         return $name;
+    }
+
+    public static function checkIfHttpRequest(): bool
+    {
+        $request = Context::get(ServerRequestInterface::class);
+        if ($request !== null) {
+            // 存在 HTTP 请求
+            return true;
+        }
+        // 不存在 HTTP 请求
+        return false;
     }
 }

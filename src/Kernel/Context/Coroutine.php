@@ -9,9 +9,13 @@ declare(strict_types=1);
 namespace Cmslz\HyperfTenancy\Kernel\Context;
 
 use Cmslz\HyperfTenancy\Kernel\Log\AppendRequestIdProcessor;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Engine\Coroutine as Co;
+use Hyperf\Engine\Exception\CoroutineDestroyedException;
+use Hyperf\Engine\Exception\RunningInNonCoroutineException;
+use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
@@ -24,6 +28,69 @@ class Coroutine
     public function __construct(protected ContainerInterface $container)
     {
         $this->logger = $container->get(StdoutLoggerInterface::class);
+    }
+
+    public static function id(): int
+    {
+        return Co::id();
+    }
+
+    public static function defer(callable $callable): void
+    {
+        Co::defer(static function () use ($callable) {
+            try {
+                $callable();
+            } catch (Throwable $throwable) {
+                static::printLog($throwable);
+            }
+        });
+    }
+
+    public static function sleep(float $seconds): void
+    {
+        usleep(intval($seconds * 1000 * 1000));
+    }
+
+    /**
+     * Returns the parent coroutine ID.
+     * Returns 0 when running in the top level coroutine.
+     * @throws RunningInNonCoroutineException when running in non-coroutine context
+     * @throws CoroutineDestroyedException when the coroutine has been destroyed
+     */
+    public static function parentId(?int $coroutineId = null): int
+    {
+        return Co::pid($coroutineId);
+    }
+
+    public static function inCoroutine(): bool
+    {
+        return Co::id() > 0;
+    }
+
+    public static function stats(): array
+    {
+        return Co::stats();
+    }
+
+    public static function exists(int $id): bool
+    {
+        return Co::exists($id);
+    }
+
+    private static function printLog(Throwable $throwable): void
+    {
+        if (ApplicationContext::hasContainer()) {
+            $container = ApplicationContext::getContainer();
+            if ($container->has(StdoutLoggerInterface::class)) {
+                $logger = $container->get(StdoutLoggerInterface::class);
+                if ($container->has(FormatterInterface::class)) {
+                    $formatter = $container->get(FormatterInterface::class);
+                    $logger->warning($formatter->format($throwable));
+                } else {
+                    $logger->warning((string)$throwable);
+                }
+            }
+        }
     }
 
     /**
