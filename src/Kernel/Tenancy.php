@@ -185,16 +185,14 @@ class Tenancy
         if (!config_base()->has($key)) {
             throw new TenancyException(sprintf('config[%s] is not exist!', $key));
         }
-        if (!config_base()->has($key)) {
+        $tenantKey = "databases." . $name;
+        if (!config_base()->has($tenantKey)) {
             $tenantDatabaseConfig = config_base()->get($key);
-            $tenantKey = "databases." . $name;
-            if (!config_base()->has($tenantKey)) {
-                $tenantDatabaseConfig["database"] = $name;
-                if (isset($tenantDatabaseConfig['cache']['prefix'])) {
-                    $tenantDatabaseConfig['cache']['prefix'] .= $id;
-                }
-                config_base()->set($tenantKey, $tenantDatabaseConfig);
+            $tenantDatabaseConfig["database"] = $name;
+            if (isset($tenantDatabaseConfig['cache']['prefix'])) {
+                $tenantDatabaseConfig['cache']['prefix'] .= $id;
             }
+            config_base()->set($tenantKey, $tenantDatabaseConfig);
         }
         return $name;
     }
