@@ -38,7 +38,7 @@ class RollbackMigration extends RollbackCommand
             if (!$this->confirmToProceed()) {
                 return;
             }
-            $this->migrator->setConnection(Tenancy::initDbConnectionName(Tenancy::getTenantDbPrefix()));
+            $this->migrator->setConnection(Tenancy::tenancyDatabase($tenant['id']));
             $this->migrator->setOutput($this->output)->rollback(
                 $this->getMigrationPaths(),
                 [

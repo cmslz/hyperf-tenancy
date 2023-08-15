@@ -95,7 +95,7 @@ class ModelMigration extends ModelCommand
             if (empty($this->input->getOption('inheritance'))) {
                 $this->input->setOption('inheritance', '\\' . Model::class);
             }
-            $this->input->setOption('pool', Tenancy::initDbConnectionName(Tenancy::getTenantDbPrefix()));
+            $this->input->setOption('pool', Tenancy::tenancyDatabase($tenant['id']));
             $this->input->setOption('with-comments', true);
             parent::handle();
         });

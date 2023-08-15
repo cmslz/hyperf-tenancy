@@ -21,10 +21,18 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Redis;
-use Swoole\Coroutine\Channel;
+use Swoole\Coroutine\WaitGroup;
 
 class Tenancy
 {
+    /**
+     * 获取上下文前缀
+     */
+    public static function getContextKey(): string
+    {
+        return config('tenancy.context', 'tenant_context');
+    }
+
     /**
      * @throws TenancyException
      */
@@ -96,18 +104,14 @@ class Tenancy
         try {
             foreach ($tenants as $tenantId) {
                 // 保证进程执行完毕后再执行下一个进程
-                $channel = new Channel(1);
-                $callable = function () use ($callable, $channel) {
-                    $result = call($callable);
-                    $channel->push($result);
-                    return $result;
-                };
-                \Swoole\Coroutine::create(
-                    function () use ($tenantId, $callable) {
-                        tenancy()->init($tenantId);
-                        call($callable, [tenancy()->getTenant()]);
-                    }
-                );
+                $wg = new WaitGroup();
+                $wg->add();
+                \Swoole\Coroutine::create(function () use ($tenantId, $wg, $callable) {
+                    tenancy()->init($tenantId);
+                    call($callable, [tenancy()->getTenant()]);
+                    $wg->done();
+                });
+                $wg->wait();
             }
         } catch (Exception $exception) {
             throw $exception;
@@ -168,50 +172,29 @@ class Tenancy
     }
 
     /**
-     * 获取租户最大连接数
-     * @return int
-     */
-    public static function getTenantMaxConnections(): int
-    {
-        $tenantMaxConnections = config_base()->get('tenancy.database.max_connections', 0);
-        if (!self::checkIfHttpRequest() && config_base()->has('tenancy.database.console_max_connections')) {
-            $tenantConsoleMaxConnections = config_base()->get('tenancy.database.console_max_connections');
-            if (!empty($tenantConsoleMaxConnections)) {
-                $tenantMaxConnections = $tenantConsoleMaxConnections;
-            }
-        }
-        return intval($tenantMaxConnections);
-    }
-
-    /**
      * @param string|null $name
      * @return string|null
      * @throws TenancyException
      * Created by xiaobai at 2023/8/3 13:46
      */
-    public static function initDbConnectionName(string $name = null): ?string
+    public static function initDbConnectionName(): ?string
     {
-        if (empty($name) && !empty(tenancy()->getId(false))) {
-            $name = Tenancy::getTenantDbPrefix();
+        $id = tenancy()->getId();
+        $name = Tenancy::tenancyDatabase($id);
+        $key = 'databases.' . self::getCentralConnection();
+        if (!config_base()->has($key)) {
+            throw new TenancyException(sprintf('config[%s] is not exist!', $key));
         }
-        if ($name === self::getTenantDbPrefix()) {
-            $id = tenancy()->getId();
-            $name = self::tenancyDatabase();
-            $key = 'databases.' . self::getCentralConnection();
-
-            if (empty(config_base()->has($key))) {
-                throw new TenancyException(sprintf('config[%s] is not exist!', $key));
-            }
+        if (!config_base()->has($key)) {
             $tenantDatabaseConfig = config_base()->get($key);
-            $tenantDatabaseConfig["database"] = $name;
-            if (isset($tenantDatabaseConfig['cache']['prefix'])) {
-                $tenantDatabaseConfig['cache']['prefix'] .= $id;
+            $tenantKey = "databases." . $name;
+            if (!config_base()->has($tenantKey)) {
+                $tenantDatabaseConfig["database"] = $name;
+                if (isset($tenantDatabaseConfig['cache']['prefix'])) {
+                    $tenantDatabaseConfig['cache']['prefix'] .= $id;
+                }
+                config_base()->set($tenantKey, $tenantDatabaseConfig);
             }
-            $tenantMaxConnections = self::getTenantMaxConnections();
-            if (!empty($tenantMaxConnections) && isset($tenantDatabaseConfig['pool']['max_connections'])) {
-                $tenantDatabaseConfig['pool']['max_connections'] = $tenantMaxConnections;
-            }
-            config_base()->set("databases." . $name, $tenantDatabaseConfig);
         }
         return $name;
     }

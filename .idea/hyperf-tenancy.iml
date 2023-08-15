@@ -89,6 +89,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/phpseclib/phpseclib" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/hyperf/async-queue" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/hyperf/command" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/cmslz/hyperf-tenancy" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

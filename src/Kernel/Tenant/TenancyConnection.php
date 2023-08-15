@@ -14,6 +14,6 @@ trait TenancyConnection
 {
     public function getConnectionName()
     {
-        return Tenancy::getTenantDbPrefix();
+        return Tenancy::initDbConnectionName();
     }
 }

@@ -17,23 +17,6 @@ https://github.com/cmslz/hyperf-tenancy
 
 > [config.tenancy](/publish/config.php)
 
-- annotations.php 配置
-
-> 创建 `Coroutine::class` 继承 `\Cmslz\HyperfTenancy\Kernel\ClassMap\Coroutine` 命名空间 `Hyperf\Coroutine`
-> 
-> 创建 `ResolverDispatcher::class` 继承 `\Cmslz\HyperfTenancy\Kernel\ClassMap\ResolverDispatcher` 命名空间 `Hyperf\Di\Resolver`
-
-```PHP
-return [
-    'scan' => [
-        ...[],
-        'class_map' => [
-            Hyperf\Coroutine\Coroutine::class => BASE_PATH . '/src/Kernel/ClassMap/Coroutine.php',
-            Hyperf\Di\Resolver\ResolverDispatcher::class => BASE_PATH . '/src/Kernel/ClassMap/ResolverDispatcher.php',
-        ],
-    ],
-];
-```
 
 - cache.php
 
@@ -98,18 +81,6 @@ return [
             ],
         ],
     ]
-];
-```
-
-- dependencies.php
-
-```PHP
-return [
-    ...[],
-    Hyperf\Contract\StdoutLoggerInterface::class => Cmslz\HyperfTenancy\Kernel\Log\LoggerFactory::class,
-    Hyperf\Server\Listener\AfterWorkerStartListener::class => Cmslz\HyperfTenancy\Kernel\Http\WorkerStartListener::class,
-    Psr\EventDispatcher\EventDispatcherInterface::class => Cmslz\HyperfTenancy\Kernel\Event\EventDispatcherFactory::class,
-    Hyperf\Database\ConnectionResolverInterface::class => Cmslz\HyperfTenancy\Kernel\Tenant\ConnectionResolver::class,
 ];
 ```
 

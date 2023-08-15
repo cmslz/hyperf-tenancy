@@ -19,6 +19,6 @@ abstract class TenancyMigration extends Migration
 {
     public function getConnection(): string
     {
-        return Tenancy::initDbConnectionName(Tenancy::getTenantDbPrefix());
+        return Tenancy::tenancyDatabase();
     }
 }

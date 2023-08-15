@@ -12,18 +12,14 @@ use Cmslz\HyperfTenancy\Kernel\Exceptions\TenancyException;
 use Cmslz\HyperfTenancy\Kernel\Tenancy;
 use Exception;
 use Hyperf\Context\ApplicationContext;
+use Hyperf\Context\Context;
 use Hyperf\HttpServer\Contract\RequestInterface;
-use Hyperf\Support\Traits\StaticInstance;
 use Cmslz\HyperfTenancy\Kernel\Tenant\Models\Tenants as TenantModel;
+use Hyperf\Support\Traits\StaticInstance;
 
 class Tenant
 {
     use StaticInstance;
-
-    /**
-     * @var string
-     */
-    protected $id;
 
     protected TenantModel|null $tenant;
 
@@ -54,12 +50,21 @@ class Tenant
          */
         $tenant = Tenancy::tenantModel()::query()->where('id', $id)->first();
         if (empty($tenant) && $isCheck) {
+            Context::destroy(Tenancy::getContextKey());
             throw new TenancyException(
                 sprintf('The tenant %s is invalid', $id)
             );
         }
-        $this->id = $id;
-        $this->tenant = $tenant;
+        Context::set(Tenancy::getContextKey(), $tenant);
+        return $tenant;
+    }
+
+    public function getTenant(): ?TenantModel
+    {
+        $tenant = Context::get(Tenancy::getContextKey());
+        if (empty($tenant)) {
+            return null;
+        }
         return $tenant;
     }
 
@@ -71,21 +76,12 @@ class Tenant
      */
     public function getId(bool $isCheck = true): ?string
     {
+        $tenant = $this->getTenant();
         // 过滤根目录
-        if (empty($this->id) && $isCheck) {
+        if (empty($tenant) && $isCheck) {
             throw new TenancyException('The tenant is invalid.');
         }
-        return $this->id;
-    }
-
-    /**
-     * 获取当前租户
-     * @return TenantModel
-     * Created by xiaobai at 2023/2/16 14:42
-     */
-    public function getTenant(): TenantModel
-    {
-        return $this->tenant;
+        return $tenant->id ?? null;
     }
 
     /**
