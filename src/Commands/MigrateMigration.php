@@ -43,7 +43,7 @@ class MigrateMigration extends MigrateCommand
             if (!$this->confirmToProceed()) {
                 return;
             }
-            $this->input->setOption('database', Tenancy::tenancyDatabase($tenant['id']));
+            $this->input->setOption('database', Tenancy::initDbConnectionName($tenant['id']));
             parent::handle();
         });
     }

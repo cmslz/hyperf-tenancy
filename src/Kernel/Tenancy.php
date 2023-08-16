@@ -177,9 +177,11 @@ class Tenancy
      * @throws TenancyException
      * Created by xiaobai at 2023/8/3 13:46
      */
-    public static function initDbConnectionName(): ?string
+    public static function initDbConnectionName(string $id = null): ?string
     {
-        $id = tenancy()->getId();
+        if (empty($id)) {
+            $id = tenancy()->getId();
+        }
         $name = Tenancy::tenancyDatabase($id);
         $key = 'databases.' . self::getCentralConnection();
         if (!config_base()->has($key)) {
