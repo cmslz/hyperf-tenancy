@@ -3,20 +3,32 @@
 https://github.com/cmslz/hyperf-tenancy
 
 ## 介绍
+
 > 1. 可通过header参数或在GET参数绑定对应租户
 >> Header:x-tenant-id:xxxx
->> GET:tenant = xxx
-
+> > GET:tenant = xxx
 
 ## 配置
 
 - amqp.php
+
 > \Cmslz\HyperfTenancy\Kernel\Tenant\AsyncQueue\RedisDriver::class
+
+- annotations.php
+
+```PHP
+return [
+    'scan' => [
+    'class_map' => [
+            Hyperf\Coroutine\Coroutine::class => BASE_PATH . '/vendor/cmslz/hyperf-tenancy/src/Kernel/ClassMap/Coroutine.php',
+        ]
+    ]
+];
+```
 
 - tenancy.php
 
 > [config.tenancy](/publish/config.php)
-
 
 - cache.php
 
@@ -123,11 +135,13 @@ return [
 ```
 
 ## 使用
+
     在需要使用路由添加中间件 `TenantMiddleware::class`
 
 ### 队列使用
 
 #### 消费端
+
 ```PHP
 <?php
 
@@ -161,6 +175,7 @@ class TenantJob extends Job
 ```
 
 #### 客户端
+
 ```PHP
 use App\Job\TenantJob;
 queue_push(new TenantJob(['2131313']),5);
