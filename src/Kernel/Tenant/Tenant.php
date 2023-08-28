@@ -53,7 +53,7 @@ class Tenant
                 $tenant = Tenancy::tenantModel()::tenantsAll($id);
             } catch (Exception $exception) {
                 if ($exception instanceof TenancyException && $isCheck) {
-                    Context::destroy(Tenancy::getContextKey());
+                    Context::set(Tenancy::getContextKey(), null);
                     throw $exception;
                 } else {
                     throw $exception;
