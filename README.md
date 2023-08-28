@@ -21,6 +21,7 @@ return [
     'scan' => [
     'class_map' => [
             Hyperf\Coroutine\Coroutine::class => BASE_PATH . '/vendor/cmslz/hyperf-tenancy/src/Kernel/ClassMap/Coroutine.php',
+            Hyperf\Database\Migrations\Migration::class => BASE_PATH . '/vendor/cmslz/hyperf-tenancy/src/Kernel/Migrations/Migration.php',
         ]
     ]
 ];

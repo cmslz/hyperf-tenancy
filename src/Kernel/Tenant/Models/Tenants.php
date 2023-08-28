@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace Cmslz\HyperfTenancy\Kernel\Tenant\Models;
 
-use Cmslz\HyperfTenancy\Kernel\Tenant\CentralConnection;
 use Hyperf\Database\Model\SoftDeletes;
 use Hyperf\DbConnection\Model\Model;
 
@@ -20,7 +19,6 @@ use Hyperf\DbConnection\Model\Model;
  */
 class Tenants extends Model
 {
-    use CentralConnection;
     use SoftDeletes;
 
     /**

@@ -9,11 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Cmslz\HyperfTenancy\Kernel\Migrations;
+namespace Hyperf\Database\Migrations;
 
 use Cmslz\HyperfTenancy\Kernel\Tenancy;
 
-abstract class TenancyMigration
+abstract class Migration
 {
     /**
      * Enables, if supported, wrapping the migration within a transaction.
@@ -30,6 +30,6 @@ abstract class TenancyMigration
      */
     public function getConnection(): string
     {
-        return Tenancy::tenancyDatabase();
+        return Tenancy::getCentralConnection();
     }
 }

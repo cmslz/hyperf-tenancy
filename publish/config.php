@@ -14,7 +14,7 @@ return [
         'localhost'
     ],
     'database' => [
-        'central_connection' => env('DB_CONNECTION', 'central'), // 不允许设置default
+        'central_connection' => env('DB_CONNECTION', 'default'),
         'tenant_prefix' => 'tenant_', // 租户数据库前缀
         'base_database' => 'base',
     ],
