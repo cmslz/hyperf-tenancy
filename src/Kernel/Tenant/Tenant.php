@@ -28,7 +28,7 @@ class Tenant
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws TenancyException
      */
-    public function init($id = null, bool $isCheck = true)
+    public function init(string $id = '', bool $isCheck = true)
     {
         if (empty($id) && $isCheck && Tenancy::checkIfHttpRequest()) {
             $request = ApplicationContext::getContainer()->get(RequestInterface::class);
@@ -44,16 +44,21 @@ class Tenant
         if (empty($id) && $isCheck) {
             throw new TenancyException('The tenant is invalid.');
         }
-
-        /**
-         * @var TenantModel $tenant
-         */
-        $tenant = Tenancy::tenantModel()::query()->where('id', $id)->first();
-        if (empty($tenant) && $isCheck) {
-            Context::destroy(Tenancy::getContextKey());
-            throw new TenancyException(
-                sprintf('The tenant %s is invalid', $id)
-            );
+        $tenant = tenancy()->getTenant();
+        if (empty($tenant) || $tenant->id !== $id) {
+            try {
+                /**
+                 * @var TenantModel $tenant
+                 */
+                $tenant = Tenancy::tenantModel()::tenantsAll($id);
+            } catch (Exception $exception) {
+                if ($exception instanceof TenancyException && $isCheck) {
+                    Context::destroy(Tenancy::getContextKey());
+                    throw $exception;
+                } else {
+                    throw $exception;
+                }
+            }
         }
         Context::set(Tenancy::getContextKey(), $tenant);
         return $tenant;

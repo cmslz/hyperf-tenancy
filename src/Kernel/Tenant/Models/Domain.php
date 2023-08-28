@@ -8,6 +8,9 @@ declare(strict_types=1);
 
 namespace Cmslz\HyperfTenancy\Kernel\Tenant\Models;
 
+use Cmslz\HyperfTenancy\Kernel\Exceptions\TenancyException;
+use Hyperf\Collection\Collection;
+use Hyperf\Context\Context;
 use Hyperf\Database\Model\SoftDeletes;
 use Hyperf\DbConnection\Model\Model;
 
@@ -53,6 +56,26 @@ class Domain extends Model
 
     public static function tenantIdByDomain(string $domain)
     {
-        return self::query()->where('domain', $domain)->value('tenant_id');
+        return (string) self::domainsAll($domain)->tenant_id;
+    }
+
+    public static function domainsAll(string $domain = null, bool $reset = false)
+    {
+        $domains = Context::get(self::class);
+        if (empty($domains) || $reset) {
+            $domains = self::query()->get();
+            Context::set(self::class, $domains);
+        }
+        if (!empty($domain)) {
+            $domain = Collection::make($domains)->where('domain', $domain)->first();
+            if (empty($domain)) {
+                if ($reset) {
+                    throw new TenancyException('The domain is invalid.');
+                }
+                return self::domainsAll($domain, true);
+            }
+            return $domain;
+        }
+        return $domains;
     }
 }

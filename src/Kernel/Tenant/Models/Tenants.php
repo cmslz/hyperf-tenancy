@@ -8,6 +8,9 @@ declare(strict_types=1);
 
 namespace Cmslz\HyperfTenancy\Kernel\Tenant\Models;
 
+use Cmslz\HyperfTenancy\Kernel\Exceptions\TenancyException;
+use Hyperf\Collection\Collection;
+use Hyperf\Context\Context;
 use Hyperf\Database\Model\SoftDeletes;
 use Hyperf\DbConnection\Model\Model;
 
@@ -46,4 +49,26 @@ class Tenants extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime'
     ];
+
+    public static function tenantsAll(string $id = null, bool $reset = false)
+    {
+        $tenants = Context::get(self::class);
+        if (empty($tenants) || $reset) {
+            $tenants = self::query()->orderBy('created_at')->get();
+            Context::set(self::class, $tenants);
+        }
+        if (!empty($id)) {
+            $tenant = Collection::make($tenants)->where('id', $id)->first();
+            if (empty($tenant)) {
+                if ($reset) {
+                    throw new TenancyException(
+                        sprintf('The tenant %s is invalid', $id)
+                    );
+                }
+                return self::tenantsAll($id, true);
+            }
+            return $tenant;
+        }
+        return $tenants;
+    }
 }
