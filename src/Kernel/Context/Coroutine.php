@@ -35,17 +35,17 @@ class Coroutine
         $coroutine = Co::create(
             function () use ($callable, $id, $tenantId) {
                 try {
+                    // Shouldn't copy all contexts to avoid socket already been bound to another coroutine.
+                    Context::copy(
+                        $id,
+                        [
+                            AppendRequestIdProcessor::REQUEST_ID,
+                            ServerRequestInterface::class,
+                        ]
+                    );
                     if ($tenantId) {
                         tenancy()->init($tenantId);
                     }
-                    // Shouldn't copy all contexts to avoid socket already been bound to another coroutine.
-//                    Context::copy(
-//                        $id,
-//                        [
-//                            AppendRequestIdProcessor::REQUEST_ID,
-//                            ServerRequestInterface::class,
-//                        ]
-//                    );
                     call($callable);
                 } catch (Throwable $throwable) {
                     $this->logger->warning((string)$throwable);

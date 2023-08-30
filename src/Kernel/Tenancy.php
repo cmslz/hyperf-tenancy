@@ -100,17 +100,17 @@ class Tenancy
 
         // Wrap string in array
         $tenants = is_string($tenants) ? [$tenants] : $tenants;
+        $wg = new WaitGroup();
+        $wg->add(count($tenants));
         foreach ($tenants as $tenantId) {
             // 保证进程执行完毕后再执行下一个进程
-            $wg = new WaitGroup();
-            $wg->add();
             co(function () use ($tenantId, $wg, $callable) {
                 tenancy()->init($tenantId);
                 call($callable, [tenancy()->getTenant()]);
                 $wg->done();
             });
-            $wg->wait();
         }
+        $wg->wait();
     }
 
     /**
