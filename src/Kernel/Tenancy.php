@@ -12,7 +12,6 @@ use Cmslz\HyperfTenancy\Kernel\Tenant\Cache\CacheManager;
 use Cmslz\HyperfTenancy\Kernel\Tenant\Models\Domain;
 use Cmslz\HyperfTenancy\Kernel\Tenant\Models\Tenants as TenantModel;
 use Cmslz\HyperfTenancy\Kernel\Tenant\Tenant;
-use Exception;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Context\Context;
 use Hyperf\Redis\RedisFactory;
@@ -21,7 +20,6 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Redis;
-use Swoole\Coroutine\WaitGroup;
 
 class Tenancy
 {
@@ -100,17 +98,17 @@ class Tenancy
 
         // Wrap string in array
         $tenants = is_string($tenants) ? [$tenants] : $tenants;
-        $wg = new WaitGroup();
-        $wg->add(count($tenants));
-        foreach ($tenants as $tenantId) {
-            // 保证进程执行完毕后再执行下一个进程
-            co(function () use ($tenantId, $wg, $callable) {
-                tenancy()->init($tenantId);
-                call($callable, [tenancy()->getTenant()]);
-                $wg->done();
-            });
+
+        $originTenantId = tenancy()->getId(false);
+        try {
+            foreach ($tenants as $tenantId) {
+                $tenant = tenancy()->init($tenantId);
+                $callable($tenant);
+                tenancy()->destroy();
+            }
+        } finally {
+            $originTenantId && tenancy()->init($originTenantId);
         }
-        $wg->wait();
     }
 
     /**
@@ -165,10 +163,9 @@ class Tenancy
     }
 
     /**
-     * @param string|null $name
+     * @param string|null $id
      * @return string|null
-     * @throws TenancyException
-     * Created by xiaobai at 2023/8/3 13:46
+     * @throws TenancyException Created by xiaobai at 2023/8/3 13:46
      */
     public static function initDbConnectionName(string $id = null): ?string
     {
