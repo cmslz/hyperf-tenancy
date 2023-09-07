@@ -1,4 +1,7 @@
-# hyperf-tenancy
+# hyperf-tenancy 安装使用
+```shell
+composer require cmslz/hyperf-tenancy
+```
 
 https://github.com/cmslz/hyperf-tenancy
 
