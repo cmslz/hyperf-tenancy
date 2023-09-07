@@ -14,7 +14,8 @@ return [
         'localhost'
     ],
     'database' => [
-        'central_connection' => env('DB_CONNECTION', 'default'),
+        'central_connection' => env('TENANCY_CENTRAL_CONNECTION', 'central'), // 不允许为default
+        'extend_connections' => explode(',', env('TENANCY_EXTEND_CONNECTIONS', '')), // 扩展链接
         'tenant_prefix' => 'tenant_', // 租户数据库前缀
         'base_database' => 'base',
     ],

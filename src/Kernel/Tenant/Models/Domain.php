@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace Cmslz\HyperfTenancy\Kernel\Tenant\Models;
 
 use Cmslz\HyperfTenancy\Kernel\Exceptions\TenancyException;
+use Cmslz\HyperfTenancy\Kernel\Tenant\CentralConnection;
 use Hyperf\Collection\Collection;
 use Hyperf\Context\Context;
 use Hyperf\Database\Model\SoftDeletes;
@@ -26,7 +27,7 @@ use Hyperf\DbConnection\Model\Model;
  */
 class Domain extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes,CentralConnection;
 
     protected ?string $table = 'tenant_domains';
 

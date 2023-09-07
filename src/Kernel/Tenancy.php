@@ -60,6 +60,7 @@ class Tenancy
         return $domainModel;
     }
 
+
     /**
      * 中央域数据库链接池
      * @return string
@@ -67,7 +68,29 @@ class Tenancy
      */
     public static function getCentralConnection(): string
     {
-        return config('tenancy.database.central_connection', 'central');
+        $centralDatabase = config('tenancy.database.central_connection', 'central');
+        if (empty($centralDatabase)) {
+            throw new TenancyException("Central Connection Not Allow Is Empty!");
+        }
+        self::checkDbConnectionName($centralDatabase);
+        return $centralDatabase;
+    }
+
+    public static function extendConnections()
+    {
+        $extendConnections = config('tenancy.database.extend_connections', []);
+        if (!is_array($extendConnections)) {
+            if (!is_string($extendConnections)) {
+                throw new TenancyException('extend_connections Format Is Array');
+            }
+            $extendConnections = explode(',', $extendConnections);
+        }
+        if (!in_array(self::getCentralConnection(), $extendConnections)) {
+            $extendConnections[] = self::getCentralConnection();
+        }
+        $extendConnections = array_diff($extendConnections, ['']);
+        self::checkDbConnectionName($extendConnections);
+        return array_values(array_unique($extendConnections));
     }
 
     /**
@@ -187,6 +210,29 @@ class Tenancy
             config_base()->set($tenantKey, $tenantDatabaseConfig);
         }
         return $name;
+    }
+
+    /**
+     * 验证链接方式
+     * @param string|array $connection
+     * @param bool $isThrow
+     * @return bool
+     * @throws TenancyException
+     */
+    public static function checkDbConnectionName(string|array $connection, bool $isThrow = true)
+    {
+        $connection = is_array($connection) ? implode(',', $connection) : $connection;
+        $connections = explode(',', $connection);
+        if (in_array('default', $connections)) {
+            throw new TenancyException("central or extend_connections Connection Not Allow Is default!");
+        }
+        if (str_contains($connection, self::getTenantDbPrefix())) {
+            if ($isThrow) {
+                throw new TenancyException('central or extend_connections Connection Not Allow Contain ' . self::getTenantDbPrefix());
+            }
+            return false;
+        }
+        return true;
     }
 
     public static function checkIfHttpRequest(): bool

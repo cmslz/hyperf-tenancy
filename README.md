@@ -27,6 +27,15 @@ return [
 ];
 ```
 
+- dependencies.php
+
+```PHP
+return [
+    Psr\EventDispatcher\EventDispatcherInterface::class => \Cmslz\HyperfTenancy\Kernel\Event\EventDispatcherFactory::class,
+    Hyperf\Database\ConnectionResolverInterface::class => \Cmslz\HyperfTenancy\Kernel\Tenant\ConnectionResolver::class,
+];
+```
+
 - tenancy.php
 
 > [config.tenancy](/publish/config.php)
