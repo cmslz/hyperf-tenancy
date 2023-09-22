@@ -114,7 +114,7 @@ class Tenancy
     public static function runForMultiple($tenants, callable $callable): void
     {
         // Convert null to all tenants
-        $tenants = empty($tenants) ? self::tenantModel()::query()->distinct()->orderBy('created_at')->pluck('id')->toArray() : $tenants;
+        $tenants = empty($tenants) ? self::tenantModel()::query()->orderBy('created_at')->pluck('id')->toArray() : $tenants;
 
         // Convert incrementing int ids to strings
         $tenants = is_int($tenants) ? (string)$tenants : $tenants;
