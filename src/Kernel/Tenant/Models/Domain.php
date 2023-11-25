@@ -68,14 +68,14 @@ class Domain extends Model
             Context::set(self::class, $domains);
         }
         if (!empty($domain)) {
-            $domain = Collection::make($domains)->where('domain', $domain)->first();
-            if (empty($domain)) {
+            $domainInfo = Collection::make($domains)->where('domain', $domain)->first();
+            if (empty($domainInfo)) {
                 if ($reset) {
                     throw new TenancyException('The domain is invalid.');
                 }
                 return self::domainsAll($domain, true);
             }
-            return $domain;
+            return $domainInfo;
         }
         return $domains;
     }

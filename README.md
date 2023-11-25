@@ -49,10 +49,10 @@ return [
 return [
     ...[],
     // 中央域缓存
-    'central' => [
-        'driver' => \Cmslz\HyperfTenancy\Kernel\Cache\RedisDriver::class,
+    'default' => [
+        'driver' => Hyperf\Cache\Driver\RedisDriver::class,
         'packer' => Hyperf\Codec\Packer\PhpSerializerPacker::class,
-        'prefix' => 'central:cache:',
+        'prefix' => 'c:',
     ],
     // 租户缓存
     'tenant' => [
@@ -68,24 +68,23 @@ return [
 
 ```PHP
 return [
-    ...[],
-    'central' => [
+    'default' => [
         'driver' => env('DB_DRIVER', 'mysql'),
         'host' => env('DB_HOST', 'localhost'),
         'port' => env('DB_PORT', 3306),
-        'database' => env('DB_CENTRAL_DATABASE', 'central'),
-        'username' => env('DB_CENTRAL_USERNAME', 'root'),
-        'password' => env('DB_CENTRAL_PASSWORD', ''),
+        'database' => env('DB_DATABASE', ''),
+        'username' => env('DB_USERNAME', 'root'),
+        'password' => env('DB_PASSWORD', ''),
         'charset' => env('DB_CHARSET', 'utf8mb4'),
-        'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
+        'collation' => env('DB_COLLATION', 'utf8mb4_general_ci'),
         'prefix' => env('DB_CENTRAL_PREFIX', ''),
         'pool' => [
             'min_connections' => 1,
-            'max_connections' => 10,
+            'max_connections' => 100,
             'connect_timeout' => 10.0,
             'wait_timeout' => 3.0,
             'heartbeat' => -1,
-            'max_idle_time' => (float) env('DB_MAX_IDLE_TIME', 60),
+            'max_idle_time' => (float)env('DB_MAX_IDLE_TIME', 60),
         ],
         'cache' => [
             'handler' => Hyperf\ModelCache\Handler\RedisHandler::class,
@@ -97,7 +96,7 @@ return [
         ],
         'commands' => [
             'gen:model' => [
-                'path' => 'app/Model',
+                'path' => 'App\Kernel\Base\BaseModel',
                 'force_casts' => true,
                 'inheritance' => 'Model',
                 'uses' => '',
@@ -105,7 +104,44 @@ return [
                 'table_mapping' => [],
             ],
         ],
-    ]
+    ],
+    'central' => [
+        'driver' => env('DB_DRIVER', 'mysql'),
+        'host' => env('DB_HOST', 'localhost'),
+        'port' => env('DB_PORT', 3306),
+        'database' => env('DB_DATABASE', 'central'),
+        'username' => env('DB_USERNAME', 'root'),
+        'password' => env('DB_PASSWORD', ''),
+        'charset' => env('DB_CHARSET', 'utf8mb4'),
+        'collation' => env('DB_COLLATION', 'utf8mb4_general_ci'),
+        'prefix' => env('DB_CENTRAL_PREFIX', ''),
+        'pool' => [
+            'min_connections' => 1,
+            'max_connections' => 100,
+            'connect_timeout' => 10.0,
+            'wait_timeout' => 3.0,
+            'heartbeat' => -1,
+            'max_idle_time' => (float)env('DB_MAX_IDLE_TIME', 60),
+        ],
+        'cache' => [
+            'handler' => Hyperf\ModelCache\Handler\RedisHandler::class,
+            'cache_key' => '{mc:%s:m:%s}:%s:%s',
+            'prefix' => 'central',
+            'ttl' => 3600 * 24,
+            'empty_model_ttl' => 600,
+            'load_script' => true,
+        ],
+        'commands' => [
+            'gen:model' => [
+                'path' => 'App\Kernel\Base\BaseModel',
+                'force_casts' => true,
+                'inheritance' => 'Model',
+                'uses' => '',
+                'refresh_fillable' => true,
+                'table_mapping' => [],
+            ],
+        ],
+    ],
 ];
 ```
 
@@ -113,21 +149,19 @@ return [
 
 ```PHP
 return [
-    ...[],
-    // 中央域通用redis
-    'central' => [
+    'default' => [
         'host' => env('REDIS_HOST', 'localhost'),
         'auth' => env('REDIS_AUTH', null),
         'port' => (int)env('REDIS_PORT', 6379),
         'db' => (int)env('REDIS_DB', 0),
         'pool' => [
             'min_connections' => 1,
-            'max_connections' => 32,
+            'max_connections' => 10,
             'connect_timeout' => 10.0,
             'wait_timeout' => 3.0,
             'heartbeat' => -1,
             'max_idle_time' => (float)env('REDIS_MAX_IDLE_TIME', 60),
-        ]
+        ],
     ],
     // 租户通用redis
     'tenant' => [
