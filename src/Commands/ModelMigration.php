@@ -33,7 +33,6 @@ class ModelMigration extends ModelCommand
     protected function configure()
     {
         parent::configure();
-        $this->addOption('tenants', null, InputOption::VALUE_REQUIRED, 'Which tenant');
     }
 
     /**
