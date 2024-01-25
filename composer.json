@@ -27,7 +27,6 @@
     "php": ">=8.0",
     "hyperf/engine": "^2.8",
     "hyperf/coroutine": "^3.0",
-    "monolog/monolog": "^2.9",
     "hyperf/logger": "^3.0",
     "hyperf/http-server": "^3.0",
     "hyperf/di": "^3.0",
