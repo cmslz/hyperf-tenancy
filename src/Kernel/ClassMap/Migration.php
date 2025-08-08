@@ -23,7 +23,7 @@ abstract class Migration
     /**
      * The name of the database connection to use.
      */
-    protected string $connection = 'default';
+    protected string $connection = '';
 
     /**
      * Get the migration connection name.

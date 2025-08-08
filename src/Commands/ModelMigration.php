@@ -30,11 +30,6 @@ class ModelMigration extends ModelCommand
         parent::setName('tenants:model');
     }
 
-    protected function configure()
-    {
-        parent::configure();
-    }
-
     /**
      * Build the class with the given name.
      */
@@ -49,7 +44,7 @@ class ModelMigration extends ModelCommand
             ->replaceTable($stub, $table);
     }
 
-    protected function createModel(string $table, ModelOption $option)
+    protected function createModel(string $table, ModelOption $option): void
     {
         $builder = $this->getSchemaBuilder($option->getPool());
         $table = Str::replaceFirst($option->getPrefix(), '', $table);
@@ -58,7 +53,7 @@ class ModelMigration extends ModelCommand
         $class = $option->getTableMapping()[$table] ?? Str::studly(Str::singular($table));
         $class = $project->namespace($option->getPath()) . $class;
         $path = BASE_PATH . '/' . $project->path($class);
-        if (! file_exists($path)) {
+        if (!file_exists($path)) {
             $this->mkdir($path);
             file_put_contents($path, $this->buildClass($table, $class, $option));
         }
@@ -91,9 +86,6 @@ class ModelMigration extends ModelCommand
     {
         Tenancy::runForMultiple(Tenancy::baseDatabase(), function ($tenant) {
             $this->line("Tenant: {$tenant['id']}");
-            if (empty($this->input->getOption('inheritance'))) {
-                $this->input->setOption('inheritance', '\\' . Model::class);
-            }
             $this->input->setOption('pool', Tenancy::initDbConnectionName($tenant['id']));
             $this->input->setOption('with-comments', true);
             parent::handle();
